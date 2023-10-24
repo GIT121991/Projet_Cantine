@@ -1,5 +1,6 @@
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from .models import Classes
 
 # Create your views here.
 def index(request):
@@ -14,3 +15,14 @@ def dashboard(request):
 
 def login(request):
     return render(request,'login.html')
+
+def classes(request):
+    if request.method == "POST":
+        section = request.POST.get("section")
+        classe = request.POST.get("classe")
+        room = Classes.objects.create(niveau=section, classe_name=classe)
+        room.save()
+        return redirect("classes")
+    else:
+        room = Classes.objects.all()
+        return render(request,'classes.html', {'classes':room})

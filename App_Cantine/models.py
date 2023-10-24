@@ -4,11 +4,16 @@ from django.contrib.auth.models import AbstractUser
 # Create your models here.
 
 class Classes(models.Model):
+    classe_niveau=(("P","Primaire"),("C","Collège"),("L","Lycée"))
     id=models.AutoField(primary_key=True)
+    niveau=models.CharField(default="C",choices=classe_niveau,max_length=10)
     classe_name=models.CharField(max_length=50)
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now_add=True)
     objects=models.Manager()
+
+    def __str__(self):
+        return f"{self.niveau} {self.classe_name}"
 
 class CustomUser(AbstractUser):
     user_type_data=((1,"Admin"),(2,"Gérand"),(3,"Agent"), (4,"Eleve"), (5,"Enseignant"))
