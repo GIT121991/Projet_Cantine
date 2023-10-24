@@ -22,7 +22,12 @@ def classes(request):
         classe = request.POST.get("classe")
         room = Classes.objects.create(niveau=section, classe_name=classe)
         room.save()
-        return redirect("classes")
+        return redirect("app_cantine:classes")
     else:
         room = Classes.objects.all()
         return render(request,'classes.html', {'classes':room})
+    
+def removeClasse(request, classe_id):
+    classe = Classes.objects.get(pk = classe_id)
+    classe.delete()
+    return redirect("app_cantine:classes")
