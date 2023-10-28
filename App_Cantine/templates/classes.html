@@ -14,55 +14,40 @@
           </ul>
           <div class="tab-content pt-2" id="myTabContent">
             <div class="tab-pane fade" id="home" role="tabpanel" aria-labelledby="home-tab">
-              <form method="POST">
-            {% csrf_token %}
+              <form method="POST" action="niveaux">
+                {% csrf_token %}
                   <br>
-            <div class="row mb-3">
-                <label class="col-sm-2 col-form-label">Section</label>
-                <div class="col-sm-10">
-                    <input type="text" class="form-control" name="section">
+                <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label">Section</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" name="section">
+                    </div>
                 </div>
-            </div>
 
-            <div class="text-center">
-              <button type="submit" class="btn btn-primary">Créer</button>
-              <button type="reset" class="btn btn-secondary">Annuler</button>
-            </div>
-          </form><!-- End Horizontal Form -->
+                <div class="text-center">
+                  <button type="submit" class="btn btn-primary">Créer</button>
+                  <button type="reset" class="btn btn-secondary">Annuler</button>
+                </div>
+              </form><!-- End Horizontal Form -->
             </div>
             <div class="tab-pane fade active show" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-              <form method="POST">
+              <form method="POST" action="{% url 'app_cantine:classes' %}">
             {% csrf_token %}
             <div class="row mb-3">
-                <label class="col-sm-2 col-form-label">Section</label>
+                <label class="col-sm-2 col-form-label" for="id_niveau">Section</label>
                 <div class="col-sm-10">
-                  <select class="form-select" aria-label="Default select example" name="section">
-
-                    <option value="Maternelle">Maternelle</option>
-                    <option value="Primaire">Primaire</option>
-                    <option value="Collège">Collège</option>
-                    <option value="Lycée">Lycée</option>
+                  <select class="form-select" aria-label="Default select example" name="niveau_id" id="id_niveau">
+                    <option value="">Aucune</option>
+                    {% for niveau in niveaux %}
+                    <option value="{{ niveau.id }}">{{ niveau.name }}</option>
+                    {% endfor %}
                   </select>
                 </div>
             </div>
             <div class="row mb-3">
-                <label class="col-sm-2 col-form-label">Classe</label>
+                <label class="col-sm-2 col-form-label" for="id_classe">Classe</label>
                 <div class="col-sm-10">
-                  <select class="form-select" aria-label="Default select example" name="classe">
-                    <option selected="">Maternelle</option>
-                    <option value="CI">CI</option>
-                    <option value="CP">CP</option>
-                    <option value="CE1">CE1</option>
-                    <option value="CE2">CE2</option>
-                    <option value="CM1">CM1</option>
-                    <option value="CM2">CM2</option>
-                    <option value="6ème">6ème</option>
-                    <option value="5ème">5ème</option>
-                    <option value="4ème">4ème</option>
-                    <option value="3ème">3ème</option>
-                    <option value="2nde">2nde</option>
-                    <option value="1ère">1ère</option>
-                    <option value="tle">Tle</option>
+                  <select class="form-select" aria-label="Default select example" name="classe" id="id_classe">
 
                   </select>
                 </div>
@@ -78,16 +63,16 @@
 
     </div>
     </div>
-   <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">Horizontal Form</h5>
+    {% if messages %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {% for message in messages %}
+            <h3 class="text-center">{{ message }}</h3>
+            {% endfor %}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
 
-          <!-- Horizontal Form -->
-
-
-        </div>
-   </div>
-  <div>
+    <div>
     <table class="table table-bordered border-primary">
         <thead>
           <tr>
@@ -100,15 +85,93 @@
         <tbody>
         {% for classe in classes %}
           <tr>
-            <th scope="row">{{classe.id}}</th>
-            <td>{{classe.niveau}}</td>
+            <th scope="row">{{forloop.counter}}</th>
+            <td>{{classe.niveau.name}}</td>
             <td>{{classe.classe_name}}</td>
-            <td><a href="{% url 'app_cantine:removeClasse' classe.id  %}" style="color: red; font-weight: bolder;">
-                <i class="bi bi-archive-fill"></i></a>
+            <td>
+                <button type="button" id="btn-delete" class="btn btn-danger" data-bs-toggle="modal"
+                        data-bs-target="#verticalycentered" data-classe-id="{{ classe.id }}">
+                <i class="bi bi-archive-fill" ></i>
+          </button>
             </td>
           </tr>
         {% endfor %}
         </tbody>
       </table>
   </div>
+
+    <!--modale de suppression -->
+
+      <div class="modal fade" id="verticalycentered" tabindex="-1" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+              <form action="{% url 'app_cantine:removeClasse' %}" method="POST">
+                  {% csrf_token %}
+                <div class="modal-header">
+                  <h5 class="modal-title">Suppression de la classe</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="classe_id" id="classe_id">
+                    <label> <strong>Etres vous sûr de vouloir supprimer cette classe ?</strong></label>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                  <button type="submit" class="btn btn-danger">Supprimer</button>
+                </div>
+              </form>
+          </div>
+        </div>
+      </div><!-- End Vertically centered Modal-->
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    // Options de classe initiales
+    var classes = {
+        1: ["PS", "MS", "GS"],
+        2: ["CI", "CP", "CE1", "CE2", "CM1", "CM2"],
+        3: ["6ème", "5ème", "4ème", "3ème"],
+        4: ["2nde", "1ère", "Tle"],
+    };
+
+    var niveauSelect = $('#id_niveau');
+    var classeSelect = $('#id_classe');
+
+    // Mettre à jour les options de classe en fonction du niveau sélectionné
+    niveauSelect.on('change', function() {
+        var selectedNiveau = $(this).val();
+        classeSelect.empty(); // Effacer les anciennes options
+        if (selectedNiveau in classes) {
+            var classeOptions = classes[selectedNiveau];
+            classeOptions.forEach(function(option) {
+                classeSelect.append($('<option>', {value: option, text: option}));
+            });
+        }
+    });
+});
+</script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    /*
+$(document).ready(function() {
+    $('.delete-btn').click(function() {
+        var classe_id = $(this).data('classe-id');
+
+        // Afficher un modal de confirmation
+        if (confirm("Êtes-vous sûr de vouloir supprimer cet élément ?")) {
+            // Si l'utilisateur confirme la suppression, redirigez vers la vue de suppression
+            window.location.href = '/supprimer-classe/' + classe_id + '/';
+        }
+    });
+});
+  */
+    $(document).on('click', '#btn-delete', function (){
+        let classe_id = $(this).data('classe-id');
+        $('#classe_id').val(classe_id)
+    });
+</script>
+
 {% endblock %}

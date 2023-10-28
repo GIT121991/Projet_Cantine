@@ -6,5 +6,6 @@ urlpatterns = [
     path('', views.login, name='login'),
     path('dashboard', views.dashboard, name='dashboard'),
     path('classes', views.classes, name='classes'),
-    path('supprimer-classe/<int:classe_id>/', views.removeClasse, name='removeClasse'),
+    path('niveaux', views.createNiveau, name='niveaux'),
+    path('supprimer-classe>/', views.removeClasse, name='removeClasse'),
 ]

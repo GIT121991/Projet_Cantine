@@ -6,15 +6,15 @@ from django.contrib.auth.models import AbstractUser
 class Niveau(models.Model):
     classe_niveau = [("P", "Primaire"), ("C", "Collège"), ("L", "Lycée")]
     id = models.AutoField(primary_key=True)
-    name = models.CharField(default="C", choices=classe_niveau, max_length=1)
+    name = models.CharField(default="C", choices=classe_niveau, max_length=15)
 
     def __str__(self):
-        return f"{self.niveau} {self.classe_name}"
+        return f"{self.name}"
 
 class Classes(models.Model):
     id=models.AutoField(primary_key=True)
     niveau = models.ForeignKey(Niveau, on_delete=models.CASCADE)
-    classe_name=models.CharField(max_length=50)
+    classe_name=models.CharField(unique=True, max_length=50)
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now_add=True)
     objects=models.Manager()
