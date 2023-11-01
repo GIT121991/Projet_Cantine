@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block main %}
     <div class="card">
-        <div class="card-header">Page d'abonnements</div>
+        <div class="card-header">Liste des non-abonnés</div>
         <div class="card-body">
           <!-- Default Tabs -->
             <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -14,14 +14,14 @@
             </ul>
             <div class="tab-content pt-2" id="myTabContent">
                 <div class="tab-pane fade" id="home" role="tabpanel" aria-labelledby="home-tab">
-                    {% if messages %}
+                    <!-- {% if messages %}
                         <div class="alert alert-danger alert-dismissible fade show" role="alert">
                             {% for message in messages %}
                                 <h3 class="text-center">{{ message }}</h3>
                             {% endfor %}
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
-                    {% endif %}
+                    {% endif %} -->
                 
                     <div>
                         <table class="table table-bordered border-primary">
@@ -44,10 +44,22 @@
                                         <td>{{student.classe.classe_name}}</td>
                                         <td>{{student.genre}}</td>
                                         <td>
-                                            <button type="button" id="btn-delete" class="btn btn-danger" data-bs-toggle="modal"
+                                            <!-- <button type="button" id="btn-delete" class="btn btn-danger" data-bs-toggle="modal"
                                                     data-bs-target="#verticalycentered" data-student-id="{{ student.id }}">
                                                 Abonner
-                                            </button>
+                                            </button> -->
+                                            <form method="POST" action="{% url 'app_cantine:abonner' student.id %}" style="display: flex; margin-left: 5px;">
+                                                {% csrf_token %}
+                                                <select aria-label="Default select example" name="type_abonnement_id" id="type_abonnement_id">
+                                                    <option value="">Type abonnement</option>
+                                                    {% for typeAbonnement in typeAbonnements %}
+                                                        <option value="{{ typeAbonnement.id }}">{{ typeAbonnement.type }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <button type="submit" class="btn btn-danger" style="margin-left: 5px;">
+                                                    Abonner
+                                                </button>
+                                            </form>
                                         </td>
                                     </tr>
                                 {% endfor %}
@@ -56,14 +68,14 @@
                     </div>
                 </div>
                 <div class="tab-pane fade active show" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                    {% if messages %}
+                    <!-- {% if messages %}
                         <div class="alert alert-danger alert-dismissible fade show" role="alert">
                             {% for message in messages %}
                                 <h3 class="text-center">{{ message }}</h3>
                             {% endfor %}
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
-                    {% endif %}
+                    {% endif %} -->
 
                     <div>
                         <table class="table table-bordered border-primary">
@@ -84,10 +96,22 @@
                                         <td>{{teacher.firstname}}</td>
                                         <td>{{teacher.genre}}</td>
                                         <td>
-                                            <button type="button" id="btn-delete" class="btn btn-danger" data-bs-toggle="modal"
+                                            <!-- <button type="button" id="btn-delete" class="btn btn-danger" data-bs-toggle="modal"
                                                     data-bs-target="#verticalycentered" data-teacher-id="{{ teacher.id }}">
-                                                Abonner
-                                            </button>
+                                                    <a href="{% url 'app_cantine:abonner' teacher.id%}" style="text-decoration: none; outline: none;">Abonner</a>
+                                            </button> -->
+                                            <form method="POST" action="{% url 'app_cantine:abonner' teacher.id %}" style="display: flex; margin-left: 5px;">
+                                                {% csrf_token %}
+                                                <select aria-label="Default select example" name="type_abonnement_id" id="type_abonnement_id">
+                                                    <option value="">Type abonnement</option>
+                                                    {% for typeAbonnement in typeAbonnements %}
+                                                        <option value="{{ typeAbonnement.id }}">{{ typeAbonnement.type }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <button type="submit" class="btn btn-danger" style="margin-left: 5px;">
+                                                    Abonner
+                                                </button>
+                                            </form>
                                         </td>
                                     </tr>
                                 {% endfor %}

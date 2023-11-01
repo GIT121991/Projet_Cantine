@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from .models import Classes, Niveau, TypeAbonnes, CustomUser
-from .forms import TypeAbonnesForm
+from .models import Classes, Niveau, TypeAbonnements, CustomUser
+from .forms import TypeAbonnementsForm
 from django.contrib import messages
 
 # Create your views here.
@@ -19,7 +19,6 @@ def login(request):
     return render(request,'login.html')
 
 def classes(request):
-
     if request.method == "POST":
         niveau_id = request.POST.get("niveau_id")
         classe = request.POST.get("classe")
@@ -55,7 +54,7 @@ def createNiveau(request):
 
 def abonnements(req):
     if req.method == "POST":
-        form = TypeAbonnesForm(req.POST)
+        form = TypeAbonnementsForm(req.POST)
         if form.is_valid():
             try:
                 form.save()
@@ -64,14 +63,14 @@ def abonnements(req):
                 messages.error(req, "Cet abonnement existe déjà")
             return redirect("app_cantine:abonnements")
     else:
-        form = TypeAbonnesForm()
-        return render(req, 'abonnements.html', { 'form': form , 'abonnements': TypeAbonnes.objects.all()} )
+        form = TypeAbonnementsForm()
+        return render(req, 'abonnements.html', { 'form': form , 'abonnements': TypeAbonnements.objects.all()} )
     
 
 def removeAbonnement(req):
     if req.POST.get('abonnement_id'):
         try:
-            abonnement = TypeAbonnes.objects.get(pk=req.POST.get('abonnement_id'))
+            abonnement = TypeAbonnements.objects.get(pk=req.POST.get('abonnement_id'))
             abonnement.delete()
             messages.success(req, f"L'abonnement {abonnement.type} a été supprimé avec succès")
         except Exception as e:
@@ -80,24 +79,42 @@ def removeAbonnement(req):
 
 
 def editAbonnement(req, abonnement_id):
-    abonnement = TypeAbonnes.objects.get(pk = abonnement_id)
+    abonnement = TypeAbonnements.objects.get(pk = abonnement_id)
     abonne = abonnement
     abonnement.delete()
     if req.method == 'POST':
-        form = TypeAbonnesForm(req.POST, instance=abonne)
+        form = TypeAbonnementsForm(req.POST, instance=abonne)
         if form.is_valid():
             form.save()
             return redirect("app_cantine:abonnements")
     else:
-        form = TypeAbonnesForm(instance=abonne)
-    return render(req, 'abonnements.html', { 'form': form , 'abonnements': TypeAbonnes.objects.all()} )
+        form = TypeAbonnementsForm(instance=abonne)
+    return render(req, 'abonnements.html', { 'form': form , 'abonnements': TypeAbonnements.objects.all()} )
 
 
 def abonnement(req):
     teachersAndStudents = CustomUser.objects.all().filter(is_abonne = False)
-    return render(req, 'abonnement.html', {"teachers": teachersAndStudents.filter(user_type = 5), "students": teachersAndStudents.filter(user_type = 4)})
+    typeAbonnements = TypeAbonnements.objects.all()
+    return render(req, 'abonnement.html', {"typeAbonnements": typeAbonnements, "teachers": teachersAndStudents.filter(user_type = 5), "students": teachersAndStudents.filter(user_type = 4)})
+
+
+def abonner(req, element_id):
+    element = CustomUser.objects.get(pk = element_id)
+    if req.method == 'POST':
+        typeAbonnementId = req.POST.get("type_abonnement_id")
+        element.is_abonne = True
+        element.type_abonnement_id = typeAbonnementId
+        element.save()
+    return redirect("app_cantine:abonnement")
 
 
 def abonnes(req):
-    
-    return render(req, 'abonnes.html', {"abonnes": CustomUser.objects.all().filter(is_abonne = True)})
+    teachersAndStudents = CustomUser.objects.all().filter(is_abonne = True)
+    return render(req, 'abonnes.html', {"teachers": teachersAndStudents.filter(user_type = 5), "students": teachersAndStudents.filter(user_type = 4)})
+
+
+def desabonner(req, element_id):
+    element = CustomUser.objects.get(pk = element_id)
+    element.is_abonne = False
+    element.save()
+    return redirect("app_cantine:abonnes")

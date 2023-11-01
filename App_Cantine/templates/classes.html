@@ -14,7 +14,7 @@
           </ul>
           <div class="tab-content pt-2" id="myTabContent">
             <div class="tab-pane fade" id="home" role="tabpanel" aria-labelledby="home-tab">
-              <form method="POST" action="niveaux">
+              <form method="POST" action="{% url 'app_cantine:niveaux' %}">
                 {% csrf_token %}
                   <br>
                 <div class="row mb-3">
@@ -155,19 +155,6 @@ $(document).ready(function() {
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    /*
-$(document).ready(function() {
-    $('.delete-btn').click(function() {
-        var classe_id = $(this).data('classe-id');
-
-        // Afficher un modal de confirmation
-        if (confirm("Êtes-vous sûr de vouloir supprimer cet élément ?")) {
-            // Si l'utilisateur confirme la suppression, redirigez vers la vue de suppression
-            window.location.href = '/supprimer-classe/' + classe_id + '/';
-        }
-    });
-});
-  */
     $(document).on('click', '#btn-delete', function (){
         let classe_id = $(this).data('classe-id');
         $('#classe_id').val(classe_id)

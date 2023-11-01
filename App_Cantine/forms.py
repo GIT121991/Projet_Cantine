@@ -1,8 +1,8 @@
 from django import forms
-from .models import TypeAbonnes
+from .models import TypeAbonnements
 
-class TypeAbonnesForm(forms.ModelForm):
+class TypeAbonnementsForm(forms.ModelForm):
     class Meta :
-        model = TypeAbonnes
+        model = TypeAbonnements
         fields = ['type', 'priceTeacher', 'priceStudent']
         labels = {'type': 'Type', 'priceTeacher': 'Prix enseignant', 'priceStudent': 'Prix élève'}
