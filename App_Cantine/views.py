@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from .models import Classes, Niveau
+from .models import Classes, Niveau, TypeAbonnes, CustomUser
+from .forms import TypeAbonnesForm
 from django.contrib import messages
 
 # Create your views here.
@@ -51,3 +52,52 @@ def createNiveau(request):
         niveau = Niveau.objects.create(name=section)
         niveau.save()
     return redirect("app_cantine:classes")
+
+def abonnements(req):
+    if req.method == "POST":
+        form = TypeAbonnesForm(req.POST)
+        if form.is_valid():
+            try:
+                form.save()
+                messages.success(req, "Ajout de type d'abonnement avec succès")
+            except:
+                messages.error(req, "Cet abonnement existe déjà")
+            return redirect("app_cantine:abonnements")
+    else:
+        form = TypeAbonnesForm()
+        return render(req, 'abonnements.html', { 'form': form , 'abonnements': TypeAbonnes.objects.all()} )
+    
+
+def removeAbonnement(req):
+    if req.POST.get('abonnement_id'):
+        try:
+            abonnement = TypeAbonnes.objects.get(pk=req.POST.get('abonnement_id'))
+            abonnement.delete()
+            messages.success(req, f"L'abonnement {abonnement.type} a été supprimé avec succès")
+        except Exception as e:
+            messages.error(req, f"Désoler nous avons rencontré une erreur {e}.")
+    return redirect("app_cantine:abonnements")
+
+
+def editAbonnement(req, abonnement_id):
+    abonnement = TypeAbonnes.objects.get(pk = abonnement_id)
+    abonne = abonnement
+    abonnement.delete()
+    if req.method == 'POST':
+        form = TypeAbonnesForm(req.POST, instance=abonne)
+        if form.is_valid():
+            form.save()
+            return redirect("app_cantine:abonnements")
+    else:
+        form = TypeAbonnesForm(instance=abonne)
+    return render(req, 'abonnements.html', { 'form': form , 'abonnements': TypeAbonnes.objects.all()} )
+
+
+def abonnement(req):
+
+    return render(req, 'abonnement.html', {"abonnements": CustomUser.objects.all().filter(is_abonne = False)})
+
+
+def abonnes(req):
+    
+    return render(req, 'abonnes.html', {"abonnes": CustomUser.objects.all().filter(is_abonne = True)})

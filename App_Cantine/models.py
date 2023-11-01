@@ -30,6 +30,7 @@ class CustomUser(models.Model):
     user_type_data = [(1, "Admin"), (2, "Gérand"), (3, "Agent"), (4, "Eleve"), (5, "Enseignant")]
     user_type = models.CharField(default=1, choices=user_type_data, max_length=1)
     classe = models.ForeignKey(Classes, on_delete=models.CASCADE, blank=True, null=True)
+    is_abonne = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True)
     objects = models.Manager()
@@ -38,3 +39,12 @@ class CustomUser(models.Model):
         return f"{self.lastname} {self.firstname}"
 
     
+class TypeAbonnes(models.Model):
+    types = [("3 jours", "3 jours"), ("Hebdomadaire", "Hebdomadaire"), ("Mensuel", "Mensuel"), ("Trimestriel", "Trimestriel")]
+    id = models.AutoField(primary_key=True)
+    type = models.CharField(default="B", choices=types, max_length=20, unique = True)
+    priceTeacher = models.IntegerField(default = 1000)
+    priceStudent = models.IntegerField(default = 1000)
+
+    def __str__(self):
+        return self.type

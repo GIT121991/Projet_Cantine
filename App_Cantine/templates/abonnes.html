@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block main %}
+    <h1>Les abonnés</h1>
+    <ul>
+        {% for abonne in abonnes %}
+            <li> {{abonne.firstname}} </li>
+        {% endfor %}
+    </ul>
+    
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+{% endblock %}
