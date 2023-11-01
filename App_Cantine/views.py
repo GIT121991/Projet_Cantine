@@ -94,8 +94,8 @@ def editAbonnement(req, abonnement_id):
 
 
 def abonnement(req):
-
-    return render(req, 'abonnement.html', {"abonnements": CustomUser.objects.all().filter(is_abonne = False)})
+    teachersAndStudents = CustomUser.objects.all().filter(is_abonne = False)
+    return render(req, 'abonnement.html', {"teachers": teachersAndStudents.filter(user_type = 5), "students": teachersAndStudents.filter(user_type = 4)})
 
 
 def abonnes(req):
