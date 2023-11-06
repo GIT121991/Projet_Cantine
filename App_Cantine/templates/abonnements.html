@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block main %}
+    <div class="card">
+        <div class="card-header">Les types d'abonnement </div>
+        <div class="card-body">
+          <!-- Default Tabs -->
+          <div class="tab-content pt-2" id="myTabContent">
+            <div class="tab-pane fade active show" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+              <form method="POST" action="{% url 'abonnements' %}">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <div class="text-center">
+                  <button type="submit" class="btn btn-primary">Ajouter</button>
+                </div>
+              </form><!-- End Horizontal Form -->
+            </div>
+          </div><!-- End Default Tabs -->
+
+    </div>
+    </div>
+    {% if messages %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {% for message in messages %}
+            <h3 class="text-center">{{ message }}</h3>
+            {% endfor %}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+
+    <div>
+    <table class="table table-bordered border-primary">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Type</th>
+            <th scope="col">Prix Enseignant</th>
+            <th scope="col">Prix Elève</th>
+            <th scope="col" colspan="2">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for abonnement in abonnements %}
+          <tr>
+            <th scope="row">{{forloop.counter}}</th>
+            <td>{{abonnement.type}}</td>
+            <td>{{abonnement.priceTeacher}}</td>
+            <td>{{abonnement.priceStudent}}</td>
+            <td>
+              <a href="{% url 'editAbonnement' abonnement.id%}" class="btn btn-secondary">
+                <i class="bi bi-pencil-fill" ></i>
+              </a>
+            </td>
+            <td>
+                <button type="button" id="btn-delete" class="btn btn-danger" data-bs-toggle="modal"
+                        data-bs-target="#verticalycentered" data-abonnement-id="{{ abonnement.id }}">
+                  <i class="bi bi-archive-fill" ></i>
+                </button>
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+  </div>
+
+    <!--modale de suppression -->
+
+      <div class="modal fade" id="verticalycentered" tabindex="-1" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+              <form action="{% url 'removeAbonnement' %}" method="POST">
+                  {% csrf_token %}
+                <div class="modal-header">
+                  <h5 class="modal-title">Suppression d'abonnement</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="abonnement_id" id="abonnement_id">
+                    <label> <strong>Etres vous sûr de vouloir supprimer cet abonnenemnt ?</strong></label>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                  <button type="submit" class="btn btn-danger">Supprimer</button>
+                </div>
+              </form>
+          </div>
+        </div>
+      </div>
+      <!-- End Vertically centered Modal -->
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+  $(document).on('click', '#btn-delete', function (){
+        let abonnement_id = $(this).data('abonnement-id');
+        $('#abonnement_id').val(abonnement_id)
+    });
+</script>
+
+{% endblock %}

@@ -30,6 +30,12 @@
   <!-- Template Main CSS File -->
   <link href="{% static 'App_Cantine/css/style.css' %}" rel="stylesheet">
 
+  <style>
+    a:link{
+      color: white;
+    }
+  </style>
+
   <!-- =======================================================
   * Template Name: NiceAdmin
   * Updated: Sep 18 2023 with Bootstrap v5.3.2
@@ -260,7 +266,7 @@
             </li>
 
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="{% url 'app_cantine:logout_page' %}">
+              <a class="dropdown-item d-flex align-items-center" href="{% url 'logout_page' %}">
                 <i class="bi bi-box-arrow-right"></i>
                 <span>Déconnecter</span>
               </a>
@@ -310,22 +316,22 @@
         </a>
         <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
-            <a href="forms-elements.html">
+            <a href="{% url 'abonnement' %}">
               <i class="bi bi-circle"></i><span>Abonnement</span>
             </a>
           </li>
           <li>
-            <a href="forms-layouts.html">
+            <a href="{% url 'abonnes' %}">
               <i class="bi bi-circle"></i><span>Abonnés</span>
             </a>
           </li>
           <li>
-            <a href="forms-editors.html">
+            <a href="{% url 'abonnements' %}">
               <i class="bi bi-circle"></i><span>Type Abonnement</span>
             </a>
           </li>
           <li>
-            <a href="{% url 'app_cantine:classes' %}">
+            <a href="{% url 'classes' %}">
               <i class="bi bi-circle"></i><span>Classes</span>
             </a>
           </li>
@@ -343,7 +349,7 @@
             </a>
           </li>
           <li>
-            <a href="{% url 'app_cantine:user_manager' %}">
+            <a href="{% url 'user_manager' %}">
               <i class="bi bi-circle"></i><span>Liste</span>
             </a>
           </li>
@@ -360,7 +366,7 @@
   <!-- ======= Footer ======= -->
   <footer id="footer" class="footer">
     <div class="copyright">
-      &copy; Copyright <strong><span>NiceAdmin</span></strong>. All Rights Reserved
+      &copy; Copyright <strong><span>UFUK-BENIN</span></strong>. All Rights Reserved
     </div>
     <div class="credits">
       <!-- All the links in the footer should remain intact. -->

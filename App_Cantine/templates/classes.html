@@ -14,7 +14,7 @@
           </ul>
           <div class="tab-content pt-2" id="myTabContent">
             <div class="tab-pane fade" id="home" role="tabpanel" aria-labelledby="home-tab">
-              <form method="POST" action="niveaux">
+              <form method="POST" action="{% url 'niveaux' %}">
                 {% csrf_token %}
                   <br>
                 <div class="row mb-3">
@@ -31,7 +31,7 @@
               </form><!-- End Horizontal Form -->
             </div>
             <div class="tab-pane fade active show" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-              <form method="POST" action="{% url 'app_cantine:classes' %}">
+              <form method="POST" action="{% url 'classes' %}">
             {% csrf_token %}
             <div class="row mb-3">
                 <label class="col-sm-2 col-form-label" for="id_niveau">Section</label>
@@ -100,12 +100,13 @@
         </table>
     </div>
 
+
     <!--modale de suppression -->
 
       <div class="modal fade" id="verticalycentered" tabindex="-1" aria-hidden="true" style="display: none;">
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
-              <form action="{% url 'app_cantine:removeClasse' %}" method="POST">
+              <form action="{% url 'removeClasse' %}" method="POST">
                   {% csrf_token %}
                 <div class="modal-header">
                   <h5 class="modal-title">Suppression de la classe</h5>

@@ -1,4 +1,5 @@
 from django import forms
+from .models import TypeAbonnements
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import get_user_model
@@ -41,3 +42,15 @@ class LoginForm(forms.Form):
         initial=False,
         widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
     )
+
+class TypeAbonnementsForm(forms.ModelForm):
+    class Meta :
+        model = TypeAbonnements
+        fields = ['type', 'priceTeacher', 'priceStudent']
+        labels = {'type': 'Type', 'priceTeacher': 'Prix enseignant', 'priceStudent': 'Prix élève'}
+        widgets = {
+            'type': forms.Select(attrs={'class': 'form-control'}),
+            'priceTeacher': forms.NumberInput(attrs={'class': 'form-control'}),
+            'priceStudent': forms.NumberInput(attrs={'class': 'form-control'}),
+        }
+

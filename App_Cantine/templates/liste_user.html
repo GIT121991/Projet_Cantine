@@ -71,7 +71,7 @@
                   </div>
                        <div class="modal-body">
                         <!-- Formulaire de modification -->
-                        <form method="post" action="{% url 'app_cantine:updateManager' %}">
+                        <form method="post" action="{% url 'updateManager' %}">
                             {% csrf_token %}
                           <input type="hidden" name="managerId" id="managerId">
                           <div class="col-12">
@@ -129,7 +129,7 @@
       <div class="modal fade" id="verticalycentered" tabindex="-1" aria-hidden="true" style="display: none;">
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
-              <form action="{% url 'app_cantine:removeManager' %}" method="POST">
+              <form action="{% url 'removeManager' %}" method="POST">
                   {% csrf_token %}
                 <div class="modal-header">
                   <h5 class="modal-title">Suppression d'un gestionnaire</h5>
