@@ -60,48 +60,52 @@
 
                 <div class="card-body">
 
-                  <div class="pt-4 pb-2">
-                    <h5 class="card-title text-center pb-0 fs-4">Connexion</h5>
-                    <p class="text-center small">Entrer votre nom d'utilisateur et mot de passe</p>
+                  <div class="pt-0 pb-1">
+                    <h5 class="card-title text-center pb-0 fs-4">Création d'utilisateur</h5>
                   </div>
-                  <!--
-                  <form method="post">
-
-                    {{ form.username.label_tag }} {{ form.username }} <br>
-                    {{ form.password.label_tag }} {{ form.password }} <br>
-                    {{ form.create_user }} Créer un autre utilisateur <br>
-                    {% csrf_token %}
-                    <button type="submit" class="form-control">Se connecter</button>
-                    <br>
-                  </form>
-                  -->
-                  <form class="row g-3 needs-validation" novalidate method="post" action="{% url 'app_cantine:login_page' %}">
+                  <form class="row g-3 needs-validation" novalidate method="post">
                     {% csrf_token %}
                     <div class="col-12">
-                      <label for="yourUsername" class="form-label">Nom d'utilisateur</label>
+                      <label for="username" class="form-label">Nom d'utilisateur</label>
                       <div class="input-group has-validation">
-                        <input type="text" name="username" class="form-control" id="yourUsername" required>
-                        <div class="invalid-feedback">Entrez vos identifiants SVP!</div>
+                        <input type="text" name="username" class="form-control" id="username" required>
                       </div>
                     </div>
-
                     <div class="col-12">
-                      <label for="yourPassword" class="form-label">Mot de passe</label>
-                      <input type="password" name="password" class="form-control" id="yourPassword" required>
-                      <div class="invalid-feedback">SVP entrez votre mot de passe!</div>
+                      <label for="last_name" class="form-label">Nom de famille</label>
+                      <div class="input-group has-validation">
+                        <input type="text" name="last_name" class="form-control" id="last_name" required>
+                      </div>
+                    </div>
+                    <div class="col-12">
+                      <label for="first_name" class="form-label">Prénoms</label>
+                      <div class="input-group has-validation">
+                        <input type="text" name="first_name" class="form-control" id="first_name" required>
+                      </div>
+                    </div>
+                    <div class="col-12">
+                      <label for="email" class="form-label">Adresse mail</label>
+                      <div class="input-group has-validation">
+                        <input type="email" name="email" class="form-control" id="email" required>
+                      </div>
+                    </div>
+                    <div class="col-12">
+                      <label for="password" class="form-label">Mot de passe</label>
+                      <input type="password" name="password" class="form-control" id="password" required>
+                    </div>
+                    <div class="col-12">
+                      <label for="password2" class="form-label">Mot de passe</label>
+                      <input type="password" name="password2" class="form-control" id="password2" required>
                     </div>
 
                     <div class="col-12">
                       <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="newuser" value="True" id="rememberMe">
-                        <label class="form-check-label" for="rememberMe">Créer un autre compte</label>
+                        <input class="form-check-input" type="checkbox" name="is_superuser" value="1" id="is_superuser">
+                        <label class="form-check-label" for="is_superuser">Super utilisateur</label>
                       </div>
                     </div>
                     <div class="col-12">
-                      <button class="btn btn-primary w-100" type="submit">Login</button>
-                    </div>
-                    <div class="col-12">
-                      <p class="small mb-0"> <a href="pages-register.html">Mot de passe oublié ?</a></p>
+                      <button class="btn btn-primary w-100" type="submit">S'inscrire</button>
                     </div>
                   </form>
 

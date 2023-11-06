@@ -73,32 +73,32 @@
     {% endif %}
 
     <div>
-    <table class="table table-bordered border-primary">
-        <thead>
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">Section</th>
-            <th scope="col">Classe</th>
-            <th scope="col">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-        {% for classe in classes %}
-          <tr>
-            <th scope="row">{{forloop.counter}}</th>
-            <td>{{classe.niveau.name}}</td>
-            <td>{{classe.classe_name}}</td>
-            <td>
-                <button type="button" id="btn-delete" class="btn btn-danger" data-bs-toggle="modal"
-                        data-bs-target="#verticalycentered" data-classe-id="{{ classe.id }}">
-                <i class="bi bi-archive-fill" ></i>
-          </button>
-            </td>
-          </tr>
-        {% endfor %}
-        </tbody>
-      </table>
-  </div>
+        <table class="table table-bordered border-primary">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Section</th>
+                <th scope="col">Classe</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% for classe in classes %}
+              <tr>
+                <th scope="row">{{forloop.counter}}</th>
+                <td>{{classe.niveau.name}}</td>
+                <td>{{classe.classe_name}}</td>
+                <td>
+                    <button type="button" id="btn-delete" class="btn btn-danger" data-bs-toggle="modal"
+                            data-bs-target="#verticalycentered" data-classe-id="{{ classe.id }}">
+                    <i class="bi bi-archive-fill" ></i>
+              </button>
+                </td>
+              </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
     <!--modale de suppression -->
 
@@ -155,19 +155,6 @@ $(document).ready(function() {
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    /*
-$(document).ready(function() {
-    $('.delete-btn').click(function() {
-        var classe_id = $(this).data('classe-id');
-
-        // Afficher un modal de confirmation
-        if (confirm("Êtes-vous sûr de vouloir supprimer cet élément ?")) {
-            // Si l'utilisateur confirme la suppression, redirigez vers la vue de suppression
-            window.location.href = '/supprimer-classe/' + classe_id + '/';
-        }
-    });
-});
-  */
     $(document).on('click', '#btn-delete', function (){
         let classe_id = $(this).data('classe-id');
         $('#classe_id').val(classe_id)
