@@ -33,6 +33,7 @@
                                     <th scope="col">Classe</th>
                                     <th scope="col">Sexe</th>
                                     <th scope="col">Type abonnement</th>
+                                    <th scope="col">Nbre de jours</th>
                                     <th scope="col">Action</th>
                                 </tr>
                             </thead>
@@ -45,6 +46,7 @@
                                         <td>{{student.classe.classe_name}}</td>
                                         <td>{{student.genre}}</td>
                                         <td>{{student.type_abonnement}}</td>
+                                        <td>{{student.type_abonnement.daysNumber}}</td>
                                         <td>
                                             <!-- <button type="button" id="btn-delete" class="btn btn-danger" data-bs-toggle="modal"
                                                     data-bs-target="#verticalycentered" data-student-id="{{ student.id }}">
@@ -79,6 +81,7 @@
                                     <th scope="col">Prénoms</th>
                                     <th scope="col">Sexe</th>
                                     <th scope="col">Type abonnement</th>
+                                    <th scope="col">Nbre de jours</th>
                                     <th scope="col">Action</th>
                                 </tr>
                             </thead>
@@ -90,6 +93,7 @@
                                         <td>{{teacher.firstname}}</td>
                                         <td>{{teacher.genre}}</td>
                                         <td>{{teacher.type_abonnement}}</td>
+                                        <td>{{teacher.type_abonnement.daysNumber}}</td>
                                         <td>
                                             <button type="button" id="btn-delete" class="btn btn-danger" data-bs-toggle="modal"
                                                     data-bs-target="#verticalycentered" data-teacher-id="{{ teacher.id }}">

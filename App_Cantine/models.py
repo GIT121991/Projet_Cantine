@@ -26,9 +26,11 @@ class Classes(models.Model):
 class TypeAbonnements(models.Model):
     types = [("3 jours", "3 jours"), ("Hebdomadaire", "Hebdomadaire"), ("Mensuel", "Mensuel"), ("Trimestriel", "Trimestriel")]
     id = models.AutoField(primary_key=True)
-    type = models.CharField(default="B", choices=types, max_length=20, unique = True)
+    type = models.CharField(default="3 jours", choices=types, max_length=20, unique = True)
     priceTeacher = models.IntegerField(default = 1000)
     priceStudent = models.IntegerField(default = 1000)
+    days = [(3, 3), (5, 5), (30, 30), (90, 90)]
+    daysNumber = models.IntegerField(choices=days)
 
     def __str__(self):
         return self.type

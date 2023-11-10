@@ -41,8 +41,8 @@ def login_page(request):
             login(request, user)
             message = f'Bonjour, {user.username}! Vous êtes connecté.'
             if create_user is not None and user.is_superuser:
-                return redirect('app_cantine:register_page')
-            return redirect('app_cantine:dashboard')
+                return redirect('register_page')
+            return redirect('dashboard')
         else:
             message = 'Identifiants invalides.'
             return render(request, 'login.html')
@@ -51,7 +51,7 @@ def login_page(request):
 def logout_page(request):
     logout(request)
     messages.success(request, "Vous êtes déconnecter")
-    return redirect('app_cantine:index')
+    return redirect('index')
 
 def register_page(request):
     if request.method == 'POST':
@@ -71,7 +71,7 @@ def register_page(request):
                                             password=password,
                                             is_superuser=is_superuser)
         new_user.save()
-        return redirect("app_cantine:index")
+        return redirect("index")
 
     else:
         messages.error(request, 'Formulaire invalide')
@@ -121,7 +121,7 @@ def updateManager(request):
             messages.success(request, f"Modification effectuée avec succès")
         except Exception as e:
             messages.error(request, f"Modification non effectuée. {e}")
-        return redirect("app_cantine:user_manager")
+        return redirect("user_manager")
 
 def removeManager(request):
     if request.POST.get('manager_id'):
@@ -131,7 +131,7 @@ def removeManager(request):
             messages.success(request, f"L'utilisateur {manager.username} a été supprimer avec succès")
         except Exception as e:
             messages.error(request, f"Desoler nous avons rencontré une erreur {e}.")
-    return redirect("app_cantine:user_manager")
+    return redirect("user_manager")
 
 def index(request):
     return render(request, 'login.html')
@@ -149,7 +149,7 @@ def classes(request):
             messages.success(request, f"La classe de {classe} a été crée avec succès")
         except:
             messages.error(request, "Cette classe existe déjà.")
-        return redirect("app_cantine:classes")
+        return redirect("classes")
 
     else:
         niveaux = Niveau.objects.all()
@@ -165,15 +165,15 @@ def removeClasse(request):
             messages.success(request, f"La classe de {classe.classe_name} a été supprimer avec succès")
         except Exception as e:
             messages.error(request, f"Desoler nous avons rencontré une erreur {e}.")
-    return redirect("app_cantine:classes")
+    return redirect("classes")
 def createNiveau(request):
     if request.method == "POST":
         section = request.POST.get("section")
         niveau = Niveau.objects.create(name=section)
         niveau.save()
-    return redirect("app_cantine:classes")
+    return redirect("classes")
 
-def abonnements(req):
+def typeAbonnements(req):
     if req.method == "POST":
         form = TypeAbonnementsForm(req.POST)
         if form.is_valid():
@@ -182,41 +182,41 @@ def abonnements(req):
                 messages.success(req, "Ajout de type d'abonnement avec succès")
             except:
                 messages.error(req, "Cet abonnement existe déjà")
-            return redirect("app_cantine:abonnements")
+            return redirect("typeAbonnements")
     else:
         form = TypeAbonnementsForm()
-        return render(req, 'type-abonnements.html', { 'form': form , 'abonnements': TypeAbonnements.objects.all()} )
+        return render(req, 'type-abonnements.html', { 'form': form , 'typeAbonnements': typeabonnements.objects.all()} )
     
 
 def removeAbonnement(req):
     if req.POST.get('abonnement_id'):
         try:
-            abonnement = TypeAbonnements.objects.get(pk=req.POST.get('abonnement_id'))
+            abonnement = typeabonnements.objects.get(pk=req.POST.get('abonnement_id'))
             abonnement.delete()
             messages.success(req, f"L'abonnement {abonnement.type} a été supprimé avec succès")
         except Exception as e:
             messages.error(req, f"Désoler nous avons rencontré une erreur {e}.")
-    return redirect("app_cantine:abonnements")
+    return redirect("typeAbonnements")
 
 
 def editAbonnement(req, abonnement_id):
-    abonnement = TypeAbonnements.objects.get(pk = abonnement_id)
+    abonnement = typeabonnements.objects.get(pk = abonnement_id)
     abonne = abonnement
     abonnement.delete()
     if req.method == 'POST':
         form = TypeAbonnementsForm(req.POST, instance=abonne)
         if form.is_valid():
             form.save()
-            return redirect("app_cantine:abonnements")
+            return redirect("typeAbonnements")
     else:
         form = TypeAbonnementsForm(instance=abonne)
-    return render(req, 'type-abonnements.html', { 'form': form , 'abonnements': TypeAbonnements.objects.all()} )
+    return render(req, 'type-abonnements.html', { 'form': form , 'typeAbonnements': typeabonnements.objects.all()} )
 
 
 def abonnement(req):
     teachersAndStudents = CustomUser.objects.all().filter(is_abonne = False)
-    typeAbonnements = TypeAbonnements.objects.all()
-    return render(req, 'abonnement.html', {"typeAbonnements": typeAbonnements, "teachers": teachersAndStudents.filter(user_type = 5), "students": teachersAndStudents.filter(user_type = 4)})
+    typeabonnements = TypeAbonnements.objects.all()
+    return render(req, 'abonnement.html', {"typeabonnements": typeabonnements, "teachers": teachersAndStudents.filter(user_type = 5), "students": teachersAndStudents.filter(user_type = 4)})
 
 
 def abonner(req, element_id):
@@ -226,7 +226,7 @@ def abonner(req, element_id):
         element.is_abonne = True
         element.type_abonnement_id = typeAbonnementId
         element.save()
-    return redirect("app_cantine:abonnement")
+    return redirect("abonnement")
 
 
 def abonnes(req):
@@ -238,4 +238,4 @@ def desabonner(req, element_id):
     element = CustomUser.objects.get(pk = element_id)
     element.is_abonne = False
     element.save()
-    return redirect("app_cantine:abonnes")
+    return redirect("abonnes")

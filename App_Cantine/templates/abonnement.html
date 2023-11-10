@@ -52,7 +52,7 @@
                                                 {% csrf_token %}
                                                 <select aria-label="Default select example" name="type_abonnement_id" id="type_abonnement_id">
                                                     <option value="">Type abonnement</option>
-                                                    {% for typeAbonnement in typeAbonnements %}
+                                                    {% for typeAbonnement in typeabonnements %}
                                                         <option value="{{ typeAbonnement.id }}">{{ typeAbonnement.type }}</option>
                                                     {% endfor %}
                                                 </select>
@@ -98,13 +98,13 @@
                                         <td>
                                             <!-- <button type="button" id="btn-delete" class="btn btn-danger" data-bs-toggle="modal"
                                                     data-bs-target="#verticalycentered" data-teacher-id="{{ teacher.id }}">
-                                                    <a href="{% url 'app_cantine:abonner' teacher.id%}" style="text-decoration: none; outline: none;">Abonner</a>
+                                                    <a href="{% url 'abonner' teacher.id%}" style="text-decoration: none; outline: none;">Abonner</a>
                                             </button> -->
                                             <form method="POST" action="{% url 'abonner' teacher.id %}" style="display: flex; margin-left: 5px;">
                                                 {% csrf_token %}
                                                 <select aria-label="Default select example" name="type_abonnement_id" id="type_abonnement_id">
                                                     <option value="">Type abonnement</option>
-                                                    {% for typeAbonnement in typeAbonnements %}
+                                                    {% for typeAbonnement in typeabonnements %}
                                                         <option value="{{ typeAbonnement.id }}">{{ typeAbonnement.type }}</option>
                                                     {% endfor %}
                                                 </select>

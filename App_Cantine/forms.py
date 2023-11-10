@@ -46,10 +46,11 @@ class LoginForm(forms.Form):
 class TypeAbonnementsForm(forms.ModelForm):
     class Meta :
         model = TypeAbonnements
-        fields = ['type', 'priceTeacher', 'priceStudent']
-        labels = {'type': 'Type', 'priceTeacher': 'Prix enseignant', 'priceStudent': 'Prix élève'}
+        fields = ['type', 'daysNumber', 'priceTeacher', 'priceStudent']
+        labels = {'type': 'Type', 'daysNumber': 'Nombre de jours', 'priceTeacher': 'Prix enseignant', 'priceStudent': 'Prix élève'}
         widgets = {
             'type': forms.Select(attrs={'class': 'form-control'}),
+            'daysNumber': forms.Select(attrs={'class': 'form-control'}),
             'priceTeacher': forms.NumberInput(attrs={'class': 'form-control'}),
             'priceStudent': forms.NumberInput(attrs={'class': 'form-control'}),
         }
