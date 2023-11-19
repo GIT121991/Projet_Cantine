@@ -44,7 +44,7 @@
                                     <td>{{student.genre}}</td>
                                     <td>{{student.classe.classe_name}}</td>                                 
                                     <td>
-                                        <a href="" class="btn btn-secondary">
+                                        <a href="{% url 'editCustomuser' student.id %}" class="btn btn-secondary">
                                             <i class="bi bi-pencil-fill" ></i>
                                         </a>
                                     </td>
@@ -89,7 +89,7 @@
                                     <td>{{teacher.firstname}}</td>
                                     <td>{{teacher.genre}}</td>
                                     <td>
-                                        <a href="" class="btn btn-secondary">
+                                        <a href="{% url 'editCustomuser' teacher.id %}" class="btn btn-secondary">
                                             <i class="bi bi-pencil-fill" ></i>
                                         </a>
                                     </td>

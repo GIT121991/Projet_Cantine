@@ -251,6 +251,32 @@ def inscrire(req):
         teacherform = TeacherForm()
         return render(req, 'inscrire.html', { 'studentform': studentform, 'teacherform': teacherform} )
 
+
+def editCustomuser(req, user_id):
+    user = CustomUser.objects.get(pk = user_id)
+    editUser = user
+    user.delete()
+    if req.method == 'POST':
+        if editUser.user_type == "Eleve":
+            studentform = StudentForm(req.POST, instance = editUser)
+            if studentform.is_valid():
+                studentform.save()
+                return redirect("liste")
+        else : 
+            teacherform = TeacherForm(req.POST, instance = editUser)
+            if teacherform.is_valid():
+                teacherform.save()
+                return redirect("liste")
+    else:
+        if editUser.user_type == "Eleve":
+            studentform = StudentForm(instance = editUser)
+            teacherform = TeacherForm()
+        else:
+            teacherform = TeacherForm(instance = editUser)
+            studentform = StudentForm()
+    return render(req, 'inscrire.html', { 'studentform': studentform, 'teacherform': teacherform} )
+
+
 def liste(req):
     teachersAndStudents = CustomUser.objects.all()
     return render(req, 'liste.html', {"teachers": teachersAndStudents.filter(user_type = "Enseignant"), "students": teachersAndStudents.filter(user_type = "Eleve")})
