@@ -28,10 +28,8 @@ urlpatterns = [
     path('abonnes/', views.abonnes, name='abonnes'),
     path('desabonner/<int:element_id>/', views.desabonner, name='desabonner'),
     path('inscrire/', views.inscrire, name='inscrire'),
-    path('modifier-eleve-enseignant/<int:user_id>', views.editCustomuser, name='editCustomuser'),
+    path('modifier-eleve-enseignant/<int:user_id>/', views.editCustomuser, name='editCustomuser'),
     path('liste/', views.liste, name='liste'),
     path('supprimer-eleve/', views.removeStudent, name='removeStudent'),
-    path('modifier-eleve/<int:student_id>/', views.editStudent, name='editStudent'),
     path('supprimer-enseignant/', views.removeTeacher, name='removeTeacher'),
-    path('modifier-enseignant/<int:teacher_id>/', views.editTeacher, name='editTeacher'),
 ]

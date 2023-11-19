@@ -57,29 +57,29 @@ class TypeAbonnementsForm(forms.ModelForm):
 
 
 class StudentForm(forms.ModelForm):
-    classe = forms.ModelChoiceField(queryset = Classes.objects.all())
-    type_abonnement = forms.ModelChoiceField(queryset = TypeAbonnements.objects.all())
+    classe = forms.ModelChoiceField(queryset = Classes.objects.all(), label='Classe', widget=forms.Select(attrs={'class': 'form-control', 'style': 'width:30%'}))
+    type_abonnement = forms.ModelChoiceField(queryset = TypeAbonnements.objects.all(), label='Type d\'bonnement', widget=forms.Select(attrs={'class': 'form-control', 'style': 'width:30%'}))
     class Meta :
         model = CustomUser
         fields = ['lastname', 'firstname', 'genre', 'user_type', 'classe', 'is_abonne', 'type_abonnement']
-        labels = {'lastname':'NOM', 'firstname':'Prénoms', 'genre':'Sexe'}
+        labels = {'lastname':'NOM', 'firstname':'Prénoms', 'genre':'Sexe', 'user_type': 'Type d\'utilisateur', 'is_abonne': 'est abonné?'}
         widgets = {
             'lastname': forms.CharField().widget.attrs.update({'class': 'form-control'}),
             'firstname': forms.CharField().widget.attrs.update({'class': 'form-control'}),
-            'genre': forms.Select(attrs={'class': 'form-control'}),
-            'user_type': forms.Select()
+            'genre': forms.Select(attrs={'class': 'form-control', 'style': 'width:30%'}),
+            'user_type': forms.Select(attrs={'class': 'form-control', 'style': 'width:30%'}),
         }
 
 class TeacherForm(forms.ModelForm):
-    type_abonnement = forms.ModelChoiceField(queryset = TypeAbonnements.objects.all())
+    type_abonnement = forms.ModelChoiceField(queryset = TypeAbonnements.objects.all(), label='Type d\'bonnement', widget=forms.Select(attrs={'class': 'form-control', 'style': 'width:30%'}))
     class Meta :
         model = CustomUser
         fields = ['lastname', 'firstname', 'genre', 'user_type', 'is_abonne', 'type_abonnement']
-        labels = {'lastname':'NOM', 'firstname':'Prénoms', 'genre':'Sexe'}
+        labels = {'lastname':'NOM', 'firstname':'Prénoms', 'genre':'Sexe', 'user_type': 'Type d\'utilisateur', 'is_abonne': 'est abonné?'}
         widgets = {
             'lastname': forms.CharField().widget.attrs.update({'class': 'form-control'}),
             'firstname': forms.CharField().widget.attrs.update({'class': 'form-control'}),
-            'genre': forms.Select(attrs={'class': 'form-control'}),
-            'user_type': forms.Select()
+            'genre': forms.Select(attrs={'class': 'form-control', 'style': 'width:30%'}),
+            'user_type': forms.Select(attrs={'class': 'form-control', 'style': 'width:30%'})
         }
 

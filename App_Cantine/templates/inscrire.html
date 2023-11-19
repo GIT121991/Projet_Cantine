@@ -24,7 +24,7 @@
                 {% endif %}
             
                 <div>
-                    <form action="{% url 'inscrire' %}" method="post">
+                    <form method="POST">
                         {% csrf_token %}
 
                         {{ studentform.as_p }}
@@ -46,7 +46,7 @@
                 {% endif %}
 
                 <div> 
-                    <form action="{% url 'inscrire' %}" method="POST">
+                    <form method="POST">
                         {% csrf_token %}
 
                         {{ teacherform.as_p }}

@@ -254,25 +254,25 @@ def inscrire(req):
 
 def editCustomuser(req, user_id):
     user = CustomUser.objects.get(pk = user_id)
-    editUser = user
-    user.delete()
+    # editUser = user
+    # user.delete()
     if req.method == 'POST':
-        if editUser.user_type == "Eleve":
-            studentform = StudentForm(req.POST, instance = editUser)
+        if user.user_type == "Eleve":
+            studentform = StudentForm(req.POST, instance = user)
             if studentform.is_valid():
                 studentform.save()
                 return redirect("liste")
         else : 
-            teacherform = TeacherForm(req.POST, instance = editUser)
+            teacherform = TeacherForm(req.POST, instance = user)
             if teacherform.is_valid():
                 teacherform.save()
                 return redirect("liste")
     else:
-        if editUser.user_type == "Eleve":
-            studentform = StudentForm(instance = editUser)
+        if user.user_type == "Eleve":
+            studentform = StudentForm(instance = user)
             teacherform = TeacherForm()
         else:
-            teacherform = TeacherForm(instance = editUser)
+            teacherform = TeacherForm(instance = user)
             studentform = StudentForm()
     return render(req, 'inscrire.html', { 'studentform': studentform, 'teacherform': teacherform} )
 
@@ -294,31 +294,6 @@ def removeStudent(req):
     return redirect("liste")
 
 
-# def addStudent(req):
-#     if req.method == 'POST':
-#         form = StudentForm(req.POST)
-#         if form.is_valid():
-#             form.save()
-#             return redirect("liste")
-#     else:
-#         form = StudentForm()
-#         return render(req, "inscrire-eleve.html", {"form": form})
-
-
-def editStudent(req, student_id):
-    student = TypeAbonnements.objects.get(pk = student_id)
-    abonne = student
-    student.delete()
-    if req.method == 'POST':
-        form = StudentForm(req.POST, instance=abonne)
-        if form.is_valid():
-            form.save()
-            return redirect("typeAbonnements")
-    else:
-        form = TypeAbonnementsForm(instance=abonne)
-    return render(req, 'type-abonnements.html', { 'form': form , 'typeAbonnements': TypeAbonnements.objects.all()} )
-
-
 def removeTeacher(req):
     if req.POST.get('teacher_id'):
         try:
@@ -329,17 +304,3 @@ def removeTeacher(req):
         except Exception as e:
             messages.error(req, f"Désoler nous avons rencontré une erreur {e}.")
     return redirect("liste")
-
-
-def editTeacher(req, student_id):
-    student = TypeAbonnements.objects.get(pk = student_id)
-    abonne = student
-    student.delete()
-    if req.method == 'POST':
-        form = StudentForm(req.POST, instance=abonne)
-        if form.is_valid():
-            form.save()
-            return redirect("typeAbonnements")
-    else:
-        form = TypeAbonnementsForm(instance=abonne)
-    return render(req, 'type-abonnements.html', { 'form': form , 'typeAbonnements': TypeAbonnements.objects.all()} )
