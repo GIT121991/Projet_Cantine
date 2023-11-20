@@ -14,14 +14,7 @@
             </ul>
             <div class="tab-content pt-2" id="myTabContent">
                 <div class="tab-pane fade" id="home" role="tabpanel" aria-labelledby="home-tab">
-                    <!-- {% if messages %}
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            {% for message in messages %}
-                                <h3 class="text-center">{{ message }}</h3>
-                            {% endfor %}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    {% endif %} -->
+
                 
                     <div>
                         <table class="table table-bordered border-primary">
@@ -32,7 +25,7 @@
                                     <th scope="col">Prénoms</th>
                                     <th scope="col">Classe</th>
                                     <th scope="col">Sexe</th>
-                                    <th scope="col">Action</th>
+                                    <th scope="col" colspan="2" style="text-align: center">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -43,24 +36,23 @@
                                         <td>{{student.firstname}}</td>
                                         <td>{{student.classe.classe_name}}</td>
                                         <td>{{student.genre}}</td>
-                                        <td>
-                                            <!-- <button type="button" id="btn-delete" class="btn btn-danger" data-bs-toggle="modal"
-                                                    data-bs-target="#verticalycentered" data-student-id="{{ student.id }}">
-                                                Abonner
-                                            </button> -->
-                                            <form method="POST" action="{% url 'abonner' student.id %}" style="display: flex; margin-left: 5px;">
+                                        <form method="POST" action="{% url 'abonner' student.id %}" style="display: flex; margin-left: 5px;">
                                                 {% csrf_token %}
-                                                <select aria-label="Default select example" name="type_abonnement_id" id="type_abonnement_id">
-                                                    <option value="">Type abonnement</option>
-                                                    {% for typeAbonnement in typeAbonnements %}
-                                                        <option value="{{ typeAbonnement.id }}">{{ typeAbonnement.type }}</option>
-                                                    {% endfor %}
-                                                </select>
-                                                <button type="submit" class="btn btn-danger" style="margin-left: 5px;">
-                                                    Abonner
-                                                </button>
-                                            </form>
+                                        <td style="width:180px;">
+                                            <select aria-label="Default select example" name="type_abonnement_id"
+                                                    id="type_abonnement_id" class="form-control btn btn-info">
+                                                <option value="">Type abonnement</option>
+                                                {% for typeAbonnement in typeAbonnements %}
+                                                    <option value="{{ typeAbonnement.id }}">{{ typeAbonnement.type }}</option>
+                                                {% endfor %}
+                                            </select>
                                         </td>
+                                        <td style="width:130px;">
+                                           <button type="submit" class="btn btn-primary">
+                                                <i class="bi bi-cart-check-fill"> Abonner</i>
+                                           </button>
+                                        </td>
+                                        </form>
                                     </tr>
                                 {% endfor %}
                             </tbody>
@@ -68,14 +60,6 @@
                     </div>
                 </div>
                 <div class="tab-pane fade active show" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                    <!-- {% if messages %}
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            {% for message in messages %}
-                                <h3 class="text-center">{{ message }}</h3>
-                            {% endfor %}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    {% endif %} -->
 
                     <div>
                         <table class="table table-bordered border-primary">
@@ -85,7 +69,7 @@
                                     <th scope="col">Nom</th>
                                     <th scope="col">Prénoms</th>
                                     <th scope="col">Sexe</th>
-                                    <th scope="col">Action</th>
+                                    <th scope="col" colspan="2" style="text-align: center">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -95,24 +79,23 @@
                                         <td>{{teacher.lastname}}</td>
                                         <td>{{teacher.firstname}}</td>
                                         <td>{{teacher.genre}}</td>
-                                        <td>
-                                            <!-- <button type="button" id="btn-delete" class="btn btn-danger" data-bs-toggle="modal"
-                                                    data-bs-target="#verticalycentered" data-teacher-id="{{ teacher.id }}">
-                                                    <a href="{% url 'app_cantine:abonner' teacher.id%}" style="text-decoration: none; outline: none;">Abonner</a>
-                                            </button> -->
-                                            <form method="POST" action="{% url 'abonner' teacher.id %}" style="display: flex; margin-left: 5px;">
+                                        <form method="POST" action="{% url 'abonner' teacher.id %}" style="display: flex; margin-left: 5px;">
                                                 {% csrf_token %}
-                                                <select aria-label="Default select example" name="type_abonnement_id" id="type_abonnement_id">
-                                                    <option value="">Type abonnement</option>
-                                                    {% for typeAbonnement in typeAbonnements %}
-                                                        <option value="{{ typeAbonnement.id }}">{{ typeAbonnement.type }}</option>
-                                                    {% endfor %}
-                                                </select>
-                                                <button type="submit" class="btn btn-danger" style="margin-left: 5px;">
-                                                    Abonner
-                                                </button>
-                                            </form>
+                                        <td style="width:180px;">
+                                            <select aria-label="Default select example" name="type_abonnement_id"
+                                                    id="type_abonnement_id2" class="form-control btn btn-info">
+                                                <option value="">Type abonnement</option>
+                                                {% for typeAbonnement in typeAbonnements %}
+                                                    <option value="{{ typeAbonnement.id }}">{{ typeAbonnement.type }}</option>
+                                                {% endfor %}
+                                            </select>
                                         </td>
+                                        <td style="width:130px;">
+                                           <button type="submit" class="btn btn-primary">
+                                                <i class="bi bi-cart-check-fill"> Abonner</i>
+                                           </button>
+                                        </td>
+                                        </form>
                                     </tr>
                                 {% endfor %}
                             </tbody>

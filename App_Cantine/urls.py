@@ -26,6 +26,6 @@ urlpatterns = [
     path('abonnement/', views.abonnement, name='abonnement'),
     path('abonner/<int:element_id>/', views.abonner, name='abonner'),
     path('abonnes/', views.abonnes, name='abonnes'),
-    path('desabonner/<int:element_id>/', views.desabonner, name='desabonner'),
+    path('desabonner/', views.desabonner, name='desabonner'),
 
 ]

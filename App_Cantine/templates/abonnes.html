@@ -14,15 +14,7 @@
             </ul>
             <div class="tab-content pt-2" id="myTabContent">
                 <div class="tab-pane fade" id="home" role="tabpanel" aria-labelledby="home-tab">
-                    <!-- {% if messages %}
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            {% for message in messages %}
-                                <h3 class="text-center">{{ message }}</h3>
-                            {% endfor %}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    {% endif %} -->
-                
+
                     <div>
                         <table class="table table-bordered border-primary">
                             <thead>
@@ -33,6 +25,7 @@
                                     <th scope="col">Classe</th>
                                     <th scope="col">Sexe</th>
                                     <th scope="col">Type abonnement</th>
+                                    <th scope="col">Nbre de Jours</th>
                                     <th scope="col">Action</th>
                                 </tr>
                             </thead>
@@ -46,12 +39,16 @@
                                         <td>{{student.genre}}</td>
                                         <td>{{student.type_abonnement}}</td>
                                         <td>
-                                            <!-- <button type="button" id="btn-delete" class="btn btn-danger" data-bs-toggle="modal"
-                                                    data-bs-target="#verticalycentered" data-student-id="{{ student.id }}">
-                                                Abonner
-                                            </button> -->
-                                            <button type="button" class="btn btn-danger" >
-                                                <a href="{% url 'desabonner' student.id%}" style="text-decoration: none; outline: none;">Désabonner</a>
+                                            {% for cle,valeur in jours_restants.items %}
+                                                {% if cle == student.id %}
+                                                    {{valeur}} Restant(s)
+                                                {% endif %}
+                                            {% endfor %}
+                                        </td>
+                                        <td>
+                                           <button type="button" id="btn_student_desabonner" class="btn btn-danger" data-bs-toggle="modal"
+                                                        data-bs-target="#verticalycentered2" data-student-id="{{ student.id }}">
+                                                <i class="bi bi-cart-x-fill"style="text-decoration: none; outline: none;"> Désabonner</i>
                                             </button>
                                         </td>
                                     </tr>
@@ -61,14 +58,6 @@
                     </div>
                 </div>
                 <div class="tab-pane fade active show" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                    <!-- {% if messages %}
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            {% for message in messages %}
-                                <h3 class="text-center">{{ message }}</h3>
-                            {% endfor %}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    {% endif %} -->
 
                     <div>
                         <table class="table table-bordered border-primary">
@@ -79,6 +68,7 @@
                                     <th scope="col">Prénoms</th>
                                     <th scope="col">Sexe</th>
                                     <th scope="col">Type abonnement</th>
+                                    <th scope="col">Nbre de jours</th>
                                     <th scope="col">Action</th>
                                 </tr>
                             </thead>
@@ -91,9 +81,16 @@
                                         <td>{{teacher.genre}}</td>
                                         <td>{{teacher.type_abonnement}}</td>
                                         <td>
-                                            <button type="button" id="btn-delete" class="btn btn-danger" data-bs-toggle="modal"
-                                                    data-bs-target="#verticalycentered" data-teacher-id="{{ teacher.id }}">
-                                                    <a href="{% url 'desabonner' teacher.id%}" style="text-decoration: none; outline: none;">Désabonner</a>
+                                            {% for cle,valeur in jours_restants.items %}
+                                                {% if cle == teacher.id %}
+                                                    {{valeur}} Restant(s)
+                                                {% endif %}
+                                            {% endfor %}
+                                        </td>
+                                        <td>
+                                            <button type="button" id="btn_teacher_desabonner" class="btn btn-danger" data-bs-toggle="modal"
+                                                        data-bs-target="#verticalycentered" data-teacher-id="{{ teacher.id }}">
+                                                <i class="bi bi-cart-x-fill"style="text-decoration: none; outline: none;"> Désabonner</i>
                                             </button>
                                         </td>
                                     </tr>
@@ -107,31 +104,66 @@
         </div>
     </div>
 
-    <!--modale de suppression -->
+    <!--modale de desabonner teacher-->
 
       <div class="modal fade" id="verticalycentered" tabindex="-1" aria-hidden="true" style="display: none;">
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
-              <form action="{% url 'removeClasse' %}" method="POST">
+              <form action="{% url 'desabonner' %}" method="POST">
                   {% csrf_token %}
                 <div class="modal-header">
-                  <h5 class="modal-title">Suppression de la classe</h5>
+                  <h5 class="modal-title">Avertissement : Désabonner </h5>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <input type="hidden" name="classe_id" id="classe_id">
-                    <label> <strong>Etres vous sûr de vouloir supprimer cette classe ?</strong></label>
+                    <input type="hidden" name="teacher_id" id="teacher_id">
+                    <label> <strong>Etres vous sûr de vouloir désabonner cette personne ?</strong></label>
                 </div>
                 <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                  <button type="submit" class="btn btn-danger">Supprimer</button>
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Non</button>
+                  <button type="submit" class="btn btn-danger">Oui</button>
                 </div>
               </form>
           </div>
         </div>
-      </div><!-- End Vertically centered Modal-->
+      </div><!-- End Vertically centered Modal teacher-->
+
+<!--modale de desabonner student-->
+
+      <div class="modal fade" id="verticalycentered2" tabindex="-1" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+              <form action="{% url 'desabonner' %}" method="POST">
+                  {% csrf_token %}
+                <div class="modal-header">
+                  <h5 class="modal-title">Avertissement : Désabonner </h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="student_id" id="student_id">
+                    <label> <strong>Etres vous sûr de vouloir désabonner cette personne ?</strong></label>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Non</button>
+                  <button type="submit" class="btn btn-danger">Oui</button>
+                </div>
+              </form>
+          </div>
+        </div>
+      </div><!-- End Vertically centered Modal sdudent-->
 
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).on('click', '#btn_teacher_desabonner', function (){
+        let teacher_id = $(this).data('teacher-id');
+        $('#teacher_id').val(teacher_id)
+    });
+
+    $(document).on('click', '#btn_student_desabonner', function (){
+        let student_id = $(this).data('student-id');
+        $('#student_id').val(student_id)
+    });
+</script>
 
 {% endblock %}

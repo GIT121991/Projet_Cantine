@@ -29,7 +29,7 @@ class TypeAbonnements(models.Model):
     type = models.CharField(default="B", choices=types, max_length=20, unique = True)
     priceTeacher = models.IntegerField(default = 1000)
     priceStudent = models.IntegerField(default = 1000)
-
+    duree_jours = models.IntegerField()
     def __str__(self):
         return self.type
 
@@ -43,9 +43,11 @@ class CustomUser(models.Model):
     classe = models.ForeignKey(Classes, on_delete=models.CASCADE, blank=True, null=True)
     is_abonne = models.BooleanField(default=False)
     type_abonnement = models.ForeignKey(TypeAbonnements, on_delete=models.CASCADE, blank=True, null=True)
+    date_abonnement = models.DateField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True)
     objects = models.Manager()
 
     def __str__(self):
         return f"{self.lastname} {self.firstname}"
+

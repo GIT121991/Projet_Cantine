@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
@@ -8,7 +10,7 @@ from django.contrib.auth.views import LoginView
 from django.contrib.auth import login, authenticate, logout
 from .forms import CustomLoginForm, LoginForm, RegisterForm
 from django.contrib.auth.hashers import make_password
-
+from django.utils import timezone
 
 # Create your views here.
 
@@ -41,8 +43,8 @@ def login_page(request):
             login(request, user)
             message = f'Bonjour, {user.username}! Vous êtes connecté.'
             if create_user is not None and user.is_superuser:
-                return redirect('app_cantine:register_page')
-            return redirect('app_cantine:dashboard')
+                return redirect('register_page')
+            return redirect('dashboard')
         else:
             message = 'Identifiants invalides.'
             return render(request, 'login.html')
@@ -51,7 +53,7 @@ def login_page(request):
 def logout_page(request):
     logout(request)
     messages.success(request, "Vous êtes déconnecter")
-    return redirect('app_cantine:index')
+    return redirect('index')
 
 def register_page(request):
     if request.method == 'POST':
@@ -71,7 +73,7 @@ def register_page(request):
                                             password=password,
                                             is_superuser=is_superuser)
         new_user.save()
-        return redirect("app_cantine:index")
+        return redirect("index")
 
     else:
         messages.error(request, 'Formulaire invalide')
@@ -121,7 +123,7 @@ def updateManager(request):
             messages.success(request, f"Modification effectuée avec succès")
         except Exception as e:
             messages.error(request, f"Modification non effectuée. {e}")
-        return redirect("app_cantine:user_manager")
+        return redirect("user_manager")
 
 def removeManager(request):
     if request.POST.get('manager_id'):
@@ -131,7 +133,7 @@ def removeManager(request):
             messages.success(request, f"L'utilisateur {manager.username} a été supprimer avec succès")
         except Exception as e:
             messages.error(request, f"Desoler nous avons rencontré une erreur {e}.")
-    return redirect("app_cantine:user_manager")
+    return redirect("user_manager")
 
 def index(request):
     return render(request, 'login.html')
@@ -149,7 +151,7 @@ def classes(request):
             messages.success(request, f"La classe de {classe} a été crée avec succès")
         except:
             messages.error(request, "Cette classe existe déjà.")
-        return redirect("app_cantine:classes")
+        return redirect("classes")
 
     else:
         niveaux = Niveau.objects.all()
@@ -165,13 +167,13 @@ def removeClasse(request):
             messages.success(request, f"La classe de {classe.classe_name} a été supprimer avec succès")
         except Exception as e:
             messages.error(request, f"Desoler nous avons rencontré une erreur {e}.")
-    return redirect("app_cantine:classes")
+    return redirect("classes")
 def createNiveau(request):
     if request.method == "POST":
         section = request.POST.get("section")
         niveau = Niveau.objects.create(name=section)
         niveau.save()
-    return redirect("app_cantine:classes")
+    return redirect("classes")
 
 def abonnements(req):
     if req.method == "POST":
@@ -182,10 +184,10 @@ def abonnements(req):
                 messages.success(req, "Ajout de type d'abonnement avec succès")
             except:
                 messages.error(req, "Cet abonnement existe déjà")
-            return redirect("app_cantine:abonnements")
+            return redirect("abonnements")
     else:
         form = TypeAbonnementsForm()
-        return render(req, 'type-abonnements.html', { 'form': form , 'abonnements': TypeAbonnements.objects.all()} )
+        return render(req, 'type-type-abonnements.html', { 'form': form , 'abonnements': TypeAbonnements.objects.all()} )
     
 
 def removeAbonnement(req):
@@ -196,7 +198,7 @@ def removeAbonnement(req):
             messages.success(req, f"L'abonnement {abonnement.type} a été supprimé avec succès")
         except Exception as e:
             messages.error(req, f"Désoler nous avons rencontré une erreur {e}.")
-    return redirect("app_cantine:abonnements")
+    return redirect("abonnements")
 
 
 def editAbonnement(req, abonnement_id):
@@ -207,11 +209,19 @@ def editAbonnement(req, abonnement_id):
         form = TypeAbonnementsForm(req.POST, instance=abonne)
         if form.is_valid():
             form.save()
-            return redirect("app_cantine:abonnements")
+            return redirect("abonnements")
     else:
         form = TypeAbonnementsForm(instance=abonne)
     return render(req, 'type-abonnements.html', { 'form': form , 'abonnements': TypeAbonnements.objects.all()} )
 
+def calculer_jours_restants(personne):
+    date_actuelle = timezone.now().date()
+    date_expiration = personne.date_abonnement + timedelta(personne.type_abonnement.duree_jours)
+    jours_restants = (date_expiration - date_actuelle).days
+    if jours_restants == 0 :
+        personne.is_abonne = 0
+        personne.save()
+    return jours_restants
 
 def abonnement(req):
     teachersAndStudents = CustomUser.objects.all().filter(is_abonne = False)
@@ -225,17 +235,34 @@ def abonner(req, element_id):
         typeAbonnementId = req.POST.get("type_abonnement_id")
         element.is_abonne = True
         element.type_abonnement_id = typeAbonnementId
+        element.date_abonnement = timezone.now().date()
         element.save()
-    return redirect("app_cantine:abonnement")
+    return redirect("abonnement")
 
 
 def abonnes(req):
     teachersAndStudents = CustomUser.objects.all().filter(is_abonne = True)
-    return render(req, 'abonnes.html', {"teachers": teachersAndStudents.filter(user_type = 5), "students": teachersAndStudents.filter(user_type = 4)})
+    liste_jours = {}
+    for teachersAndStudent in teachersAndStudents:
+        liste_jours[teachersAndStudent.id] = calculer_jours_restants(teachersAndStudent)
+    return render(req, 'abonnes.html', {"teachers": teachersAndStudents.filter(user_type = 5), "students": teachersAndStudents.filter(user_type = 4), "jours_restants": liste_jours})
 
 
-def desabonner(req, element_id):
-    element = CustomUser.objects.get(pk = element_id)
-    element.is_abonne = False
-    element.save()
-    return redirect("app_cantine:abonnes")
+def desabonner(request):
+    if request.POST.get('teacher_id'):
+        try:
+            teacher = CustomUser.objects.get(pk=request.POST.get('teacher_id'))
+            teacher.is_abonne = 0
+            teacher.save()
+            messages.success(request, f"L'abonné {teacher.firstname} a été supprimer avec succès")
+        except Exception as e:
+            messages.error(request, f"Desoler nous avons rencontré une erreur {e}.")
+    if request.POST.get('student_id'):
+        try:
+            student = CustomUser.objects.get(pk=request.POST.get('student_id'))
+            student.is_abonne = 0
+            student.save()
+            messages.success(request, f"L'abonné {student.firstname} a été supprimer avec succès")
+        except Exception as e:
+            messages.error(request, f"Desoler nous avons rencontré une erreur {e}.")
+    return redirect("abonnes")

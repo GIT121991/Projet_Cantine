@@ -75,7 +75,7 @@
                     <br>
                   </form>
                   -->
-                  <form class="row g-3 needs-validation" novalidate method="post" action="{% url 'app_cantine:login_page' %}">
+                  <form class="row g-3 needs-validation" novalidate method="post" action="{% url 'login_page' %}">
                     {% csrf_token %}
                     <div class="col-12">
                       <label for="yourUsername" class="form-label">Nom d'utilisateur</label>
