@@ -6,7 +6,7 @@
           <!-- Default Tabs -->
           <div class="tab-content pt-2" id="myTabContent">
             <div class="tab-pane fade active show" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-              <form method="POST" action="{% url 'abonnements' %}">
+              <form method="POST">
                 {% csrf_token %}
                 {{ form.as_p }}
                 <div class="text-center">
@@ -39,7 +39,7 @@
           </tr>
         </thead>
         <tbody>
-        {% for abonnement in abonnements %}
+        {% for abonnement in typeAbonnements %}
           <tr>
             <th scope="row">{{forloop.counter}}</th>
             <td>{{abonnement.type}}</td>

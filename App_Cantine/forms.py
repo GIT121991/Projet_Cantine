@@ -1,5 +1,5 @@
 from django import forms
-from .models import TypeAbonnements
+from .models import TypeAbonnements, CustomUser, Classes
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import get_user_model
@@ -46,11 +46,45 @@ class LoginForm(forms.Form):
 class TypeAbonnementsForm(forms.ModelForm):
     class Meta :
         model = TypeAbonnements
-        fields = ['type', 'priceTeacher', 'priceStudent']
-        labels = {'type': 'Type', 'priceTeacher': 'Prix enseignant', 'priceStudent': 'Prix élève'}
+        fields = ['type', 'priceTeacher', 'priceStudent', 'duree_jours']
+        labels = {'type': 'Type', 'priceTeacher': 'Prix enseignant', 'priceStudent': 'Prix élève', 'duree_jours': 'Durée jours'}
         widgets = {
             'type': forms.Select(attrs={'class': 'form-control'}),
             'priceTeacher': forms.NumberInput(attrs={'class': 'form-control'}),
             'priceStudent': forms.NumberInput(attrs={'class': 'form-control'}),
+            'duree_jours': forms.NumberInput(attrs={'class': 'form-control'}),
+        }
+
+
+class StudentForm(forms.ModelForm):
+    classe = forms.ModelChoiceField(queryset = Classes.objects.all(), label='Classe', widget=forms.Select(attrs={'class': 'form-control', 'style': 'width:30%'}))
+    type_abonnement = forms.ModelChoiceField(queryset = TypeAbonnements.objects.all(), label='Type d\'bonnement', widget=forms.Select(attrs={'class': 'form-control', 'style': 'width:30%'}))
+    class Meta :
+        model = CustomUser
+        fields = ['lastname', 'firstname', 'genre', 'user_type', 'classe', 'is_abonne', 'type_abonnement']
+        labels = {'lastname':'NOM', 'firstname':'Prénoms', 'genre':'Sexe', 'user_type': 'Type d\'utilisateur', 'is_abonne': 'est abonné?'}
+        widgets = {
+            'lastname': forms.CharField().widget.attrs.update({'class': 'form-control'}),
+            'firstname': forms.CharField().widget.attrs.update({'class': 'form-control'}),
+            'genre': forms.Select(attrs={'class': 'form-control', 'style': 'width:30%'}),
+            'user_type': forms.Select(attrs={'class': 'form-control', 'style': 'width:30%'}),
+        }
+
+class CustomUserForm(forms.ModelForm):
+    class Meta :
+        try:
+            classe_list = [(classe.id, classe.classe_name) for classe in Classes.objects.all()]
+        except:
+            classe_list = []
+        model = CustomUser
+        fields = ['lastname', 'firstname', 'genre', 'user_type', 'classe']
+        labels = {'lastname':'NOM', 'firstname':'Prénoms', 'genre':'Sexe', "user_type": "Type d'utilisateur", 'classe':'Classes'}
+        widgets = {
+            'lastname': forms.TextInput(attrs={"class": "form-control", "autocomplete": "off"}),
+            'firstname': forms.TextInput(attrs={"class": "form-control", "autocomplete": "off"}),
+            'genre': forms.Select(attrs={'class': 'form-control'}),
+            'user_type': forms.Select(attrs={'class': 'form-control'}),
+            'classe': forms.Select(attrs={"class": "form-control"}, choices=classe_list),
+
         }
 

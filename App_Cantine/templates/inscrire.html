@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block main %}
+<div class="card">
+    <div class="card-header">Ajout des abonnés</div>
+    <div class="card-body" style="width: 50%; margin: auto">
+        {% if messages %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {% for message in messages %}
+                    <h3 class="text-center">{{ message }}</h3>
+                {% endfor %}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endif %}
+
+        <div>
+            <form method="POST">
+                {% csrf_token %}
+
+                {{ form.as_p }}
+
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary">Ajouter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+{% endblock %}

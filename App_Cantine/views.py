@@ -1,16 +1,18 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from .models import Classes, Niveau, TypeAbonnements, CustomUser
-from .forms import TypeAbonnementsForm
+from .forms import TypeAbonnementsForm, CustomUserForm, CustomLoginForm, LoginForm, RegisterForm
 from django.contrib import messages
 from django.contrib.auth.views import LoginView
 from django.contrib.auth import login, authenticate, logout
-from .forms import CustomLoginForm, LoginForm, RegisterForm
 from django.contrib.auth.hashers import make_password
 from django.utils import timezone
+import xlrd
+from openpyxl import load_workbook
+
 
 # Create your views here.
 
@@ -48,7 +50,6 @@ def login_page(request):
         else:
             message = 'Identifiants invalides.'
             return render(request, 'login.html')
-
 
 def logout_page(request):
     logout(request)
@@ -168,6 +169,7 @@ def removeClasse(request):
         except Exception as e:
             messages.error(request, f"Desoler nous avons rencontré une erreur {e}.")
     return redirect("classes")
+
 def createNiveau(request):
     if request.method == "POST":
         section = request.POST.get("section")
@@ -175,20 +177,19 @@ def createNiveau(request):
         niveau.save()
     return redirect("classes")
 
-def abonnements(req):
+def typeAbonnements(req):
     if req.method == "POST":
         form = TypeAbonnementsForm(req.POST)
         if form.is_valid():
             try:
                 form.save()
                 messages.success(req, "Ajout de type d'abonnement avec succès")
-            except:
-                messages.error(req, "Cet abonnement existe déjà")
-            return redirect("abonnements")
+            except Exception as e:
+                messages.error(req, f"Cet abonnement existe déjà {e}")
+            return redirect("typeAbonnements")
     else:
         form = TypeAbonnementsForm()
-        return render(req, 'type-type-abonnements.html', { 'form': form , 'abonnements': TypeAbonnements.objects.all()} )
-    
+    return render(req, 'type-abonnements.html', { 'form': form , 'typeAbonnements': TypeAbonnements.objects.all()} )
 
 def removeAbonnement(req):
     if req.POST.get('abonnement_id'):
@@ -198,21 +199,18 @@ def removeAbonnement(req):
             messages.success(req, f"L'abonnement {abonnement.type} a été supprimé avec succès")
         except Exception as e:
             messages.error(req, f"Désoler nous avons rencontré une erreur {e}.")
-    return redirect("abonnements")
-
+    return redirect("typeAbonnements")
 
 def editAbonnement(req, abonnement_id):
     abonnement = TypeAbonnements.objects.get(pk = abonnement_id)
-    abonne = abonnement
-    abonnement.delete()
     if req.method == 'POST':
-        form = TypeAbonnementsForm(req.POST, instance=abonne)
+        form = TypeAbonnementsForm(req.POST, instance=abonnement)
         if form.is_valid():
             form.save()
-            return redirect("abonnements")
+            return redirect("typeabonnements")
     else:
-        form = TypeAbonnementsForm(instance=abonne)
-    return render(req, 'type-abonnements.html', { 'form': form , 'abonnements': TypeAbonnements.objects.all()} )
+        form = TypeAbonnementsForm(instance=abonnement)
+    return render(req, 'type-abonnements.html', { 'form': form , 'typeabonnements': TypeAbonnements.objects.all()} )
 
 def calculer_jours_restants(personne):
     date_actuelle = timezone.now().date()
@@ -224,10 +222,9 @@ def calculer_jours_restants(personne):
     return jours_restants
 
 def abonnement(req):
-    teachersAndStudents = CustomUser.objects.all().filter(is_abonne = False)
+    teachersAndStudents = CustomUser.objects.all().filter(is_abonne = 0)
     typeAbonnements = TypeAbonnements.objects.all()
-    return render(req, 'abonnement.html', {"typeAbonnements": typeAbonnements, "teachers": teachersAndStudents.filter(user_type = 5), "students": teachersAndStudents.filter(user_type = 4)})
-
+    return render(req, 'abonnement.html', {"typeAbonnements": typeAbonnements, "teachers": teachersAndStudents.filter(user_type = "Enseignant"), "students": teachersAndStudents.filter(user_type = "Eleve")})
 
 def abonner(req, element_id):
     element = CustomUser.objects.get(pk = element_id)
@@ -241,11 +238,11 @@ def abonner(req, element_id):
 
 
 def abonnes(req):
-    teachersAndStudents = CustomUser.objects.all().filter(is_abonne = True)
+    teachersAndStudents = CustomUser.objects.all().filter(is_abonne = 1)
     liste_jours = {}
     for teachersAndStudent in teachersAndStudents:
         liste_jours[teachersAndStudent.id] = calculer_jours_restants(teachersAndStudent)
-    return render(req, 'abonnes.html', {"teachers": teachersAndStudents.filter(user_type = 5), "students": teachersAndStudents.filter(user_type = 4), "jours_restants": liste_jours})
+    return render(req, 'abonnes.html', {"teachers": teachersAndStudents.filter(user_type = "Enseignant"), "students": teachersAndStudents.filter(user_type = "Eleve"), "jours_restants": liste_jours})
 
 
 def desabonner(request):
@@ -266,3 +263,103 @@ def desabonner(request):
         except Exception as e:
             messages.error(request, f"Desoler nous avons rencontré une erreur {e}.")
     return redirect("abonnes")
+
+
+def inscrire(req):
+    if req.method == 'POST':
+        form = CustomUserForm(req.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("liste")
+    else:
+
+        form = CustomUserForm()
+        return render(req, 'inscrire.html', {'form': form} )
+
+
+def editCustomuser(req, user_id):
+    user = CustomUser.objects.get(pk = user_id)
+    if req.method == 'POST':
+        form = CustomUserForm(req.POST, instance = user)
+        if form.is_valid():
+            form.save()
+            return redirect("liste")
+    else:
+        form = CustomUserForm(instance = user)
+    return render(req, 'inscrire.html', {'form': form})
+
+
+def liste(request):
+    teachersAndStudents = CustomUser.objects.all()
+
+    return render(request, 'liste.html', {"teachers": teachersAndStudents.filter(user_type = "Enseignant"), "students": teachersAndStudents.filter(user_type = "Eleve")})
+
+
+def removeStudent(req):
+    if req.POST.get('student_id'):
+        try:
+            student = CustomUser.objects.get(pk=req.POST.get('student_id'))
+            name = student.firstname
+            student.delete()
+            messages.success(req, f"L'élève {name} a été supprimé avec succès")
+        except Exception as e:
+            messages.error(req, f"Désoler nous avons rencontré une erreur {e}.")
+    return redirect("liste")
+
+
+def removeTeacher(req):
+    if req.POST.get('teacher_id'):
+        try:
+            teacher = CustomUser.objects.get(pk=req.POST.get('teacher_id'))
+            name = teacher.firstname
+            teacher.delete()
+            messages.success(req, f"L'élève {name} a été supprimé avec succès")
+        except Exception as e:
+            messages.error(req, f"Désoler nous avons rencontré une erreur {e}.")
+    return redirect("liste")
+
+def importer_fichier(request):
+    if request.method == 'POST' and request.FILES['fichier']:
+        fichier = request.FILES['fichier']
+
+        try:
+            if fichier.name.endswith('.xls'):
+                # Utiliser xlrd pour les fichiers .xls
+                book = xlrd.open_workbook(file_contents=fichier.read())
+                sheet = book.sheet_by_index(0)
+                # Enregistrement des données dans la base de données
+                for row_num in range(1, sheet.nrows):  # Commencer à partir de la deuxième ligne
+                    row = sheet.row_values(row_num)
+                    instance = CustomUser(
+                        lastname=row[0],
+                        firstname=row[1],
+                        genre=row[2],
+                        user_type=row[3],
+                        classe_id=row[4],
+                    )
+                    instance.save()
+                messages.success(request, 'Données importées avec succès')
+                return redirect("liste")
+            elif fichier.name.endswith('.xlsx'):
+                # Utiliser openpyxl pour les fichiers .xlsx
+                workbook = load_workbook(fichier, read_only=True)
+                sheet = workbook.active
+                # Enregistrement des données dans la base de données
+                for row in sheet.iter_rows(min_row=2, values_only=True):  # Commencer à partir de la deuxième ligne
+
+                    instance = CustomUser(
+                        lastname=row[0],
+                        firstname=row[1],
+                        genre=row[2],
+                        user_type=row[3],
+                        classe_id=row[4],
+                    )
+                    instance.save()
+                messages.success(request, 'Données importées avec succès')
+                return redirect("liste")
+            else:
+                raise ValueError('Format de fichier non pris en charge')
+        except Exception as e:
+            return JsonResponse({'erreur': str(e)}, status=500)
+
+    return JsonResponse({'erreur': 'Requête incorrecte'}, status=400)

@@ -20,13 +20,13 @@ class Classes(models.Model):
     objects=models.Manager()
 
     def __str__(self):
-        return f"{self.niveau} {self.classe_name}"
+        return f"{self.classe_name}"
 
 
 class TypeAbonnements(models.Model):
-    types = [("3 jours", "3 jours"), ("Hebdomadaire", "Hebdomadaire"), ("Mensuel", "Mensuel"), ("Trimestriel", "Trimestriel")]
+    types = [("Aucun", "Aucun"), ("3 jours", "3 jours"), ("Hebdomadaire", "Hebdomadaire"), ("Mensuel", "Mensuel"), ("Trimestriel", "Trimestriel")]
     id = models.AutoField(primary_key=True)
-    type = models.CharField(default="B", choices=types, max_length=20, unique = True)
+    type = models.CharField(default="3 jours", choices=types, max_length=20, unique = True)
     priceTeacher = models.IntegerField(default = 1000)
     priceStudent = models.IntegerField(default = 1000)
     duree_jours = models.IntegerField()
@@ -38,16 +38,14 @@ class CustomUser(models.Model):
     firstname = models.CharField(max_length=50)
     sexe = [("F", "Féminin"), ("M", "Masculin")]
     genre = models.CharField(default="M", choices=sexe, max_length=1)
-    user_type_data = [(1, "Admin"), (2, "Gérand"), (3, "Agent"), (4, "Eleve"), (5, "Enseignant")]
-    user_type = models.CharField(default=1, choices=user_type_data, max_length=1)
+    user_type_data = [("Admin", "Admin"), ("Gérand", "Gérand"), ("Agent", "Agent"), ("Eleve", "Eleve"), ("Enseignant", "Enseignant")]
+    user_type = models.CharField(default="Eleve", choices=user_type_data, max_length=50)
     classe = models.ForeignKey(Classes, on_delete=models.CASCADE, blank=True, null=True)
     is_abonne = models.BooleanField(default=False)
     type_abonnement = models.ForeignKey(TypeAbonnements, on_delete=models.CASCADE, blank=True, null=True)
     date_abonnement = models.DateField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True)
-    objects = models.Manager()
 
     def __str__(self):
         return f"{self.lastname} {self.firstname}"
-

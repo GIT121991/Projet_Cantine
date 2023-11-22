@@ -1,7 +1,6 @@
 from django.urls import path
 from App_Cantine import views
 
-
 urlpatterns = [
     path('', views.index, name='index'),
     path('login', views.login_page, name='login_page'),
@@ -20,12 +19,18 @@ urlpatterns = [
     path('classes/', views.classes, name='classes'),
     path('niveaux/', views.createNiveau, name='niveaux'),
     path('supprimer-classe/', views.removeClasse, name='removeClasse'),
-    path('abonnements/', views.abonnements, name='abonnements'),
+    path('typeAbonnements/', views.typeAbonnements, name='typeAbonnements'),
     path('supprimer-abonnement/', views.removeAbonnement, name='removeAbonnement'),
     path('modifier-abonnement/<int:abonnement_id>/', views.editAbonnement, name='editAbonnement'),
     path('abonnement/', views.abonnement, name='abonnement'),
     path('abonner/<int:element_id>/', views.abonner, name='abonner'),
     path('abonnes/', views.abonnes, name='abonnes'),
     path('desabonner/', views.desabonner, name='desabonner'),
-
+    path('desabonner/<int:element_id>/', views.desabonner, name='desabonner'),
+    path('inscrire/', views.inscrire, name='inscrire'),
+    path('modifier-eleve-enseignant/<int:user_id>/', views.editCustomuser, name='editCustomuser'),
+    path('liste/', views.liste, name='liste'),
+    path('supprimer-eleve/', views.removeStudent, name='removeStudent'),
+    path('supprimer-enseignant/', views.removeTeacher, name='removeTeacher'),
+    path('liste/importer-user/', views.importer_fichier, name='importer_fichier'),
 ]
