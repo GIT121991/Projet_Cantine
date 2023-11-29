@@ -177,59 +177,77 @@ def createNiveau(request):
         niveau.save()
     return redirect("classes")
 
-def typeAbonnements(req):
-    if req.method == "POST":
-        form = TypeAbonnementsForm(req.POST)
+def typeAbonnements(request):
+    if request.method == "POST":
+        form = TypeAbonnementsForm(request.POST)
         if form.is_valid():
             try:
                 form.save()
-                messages.success(req, "Ajout de type d'abonnement avec succès")
+                messages.success(request, "Ajout de type d'abonnement avec succès")
             except Exception as e:
-                messages.error(req, f"Cet abonnement existe déjà {e}")
+                messages.error(request, f"Cet abonnement existe déjà {e}")
             return redirect("typeAbonnements")
     else:
         form = TypeAbonnementsForm()
-    return render(req, 'type-abonnements.html', { 'form': form , 'typeAbonnements': TypeAbonnements.objects.all()} )
+    return render(request, 'type-abonnements.html', { 'form': form , 'typeAbonnements': TypeAbonnements.objects.all()} )
 
-def removeAbonnement(req):
-    if req.POST.get('abonnement_id'):
+def removeAbonnement(request):
+    if request.POST.get('abonnement_id'):
         try:
-            abonnement = TypeAbonnements.objects.get(pk=req.POST.get('abonnement_id'))
+            abonnement = TypeAbonnements.objects.get(pk=request.POST.get('abonnement_id'))
             abonnement.delete()
-            messages.success(req, f"L'abonnement {abonnement.type} a été supprimé avec succès")
+            messages.success(request, f"L'abonnement {abonnement.type} a été supprimé avec succès")
         except Exception as e:
-            messages.error(req, f"Désoler nous avons rencontré une erreur {e}.")
+            messages.error(request, f"Désoler nous avons rencontré une erreur {e}.")
     return redirect("typeAbonnements")
 
-def editAbonnement(req, abonnement_id):
+def editAbonnement(request, abonnement_id):
     abonnement = TypeAbonnements.objects.get(pk = abonnement_id)
-    if req.method == 'POST':
-        form = TypeAbonnementsForm(req.POST, instance=abonnement)
+    if request.method == 'POST':
+        form = TypeAbonnementsForm(request.POST, instance=abonnement)
         if form.is_valid():
             form.save()
             return redirect("typeabonnements")
     else:
         form = TypeAbonnementsForm(instance=abonnement)
-    return render(req, 'type-abonnements.html', { 'form': form , 'typeabonnements': TypeAbonnements.objects.all()} )
+    return render(request, 'type-abonnements.html', { 'form': form , 'typeabonnements': TypeAbonnements.objects.all()} )
 
 def calculer_jours_restants(personne):
     date_actuelle = timezone.now().date()
-    date_expiration = personne.date_abonnement + timedelta(personne.type_abonnement.duree_jours)
+    dureeJours = personne.type_abonnement.duree_jours
+    print("les durée sont :",dureeJours)
+    date_expiration = personne.date_abonnement + timedelta(dureeJours)
     jours_restants = (date_expiration - date_actuelle).days
-    if jours_restants == 0 :
+    if jours_restants <= 0 :
         personne.is_abonne = 0
         personne.save()
     return jours_restants
 
-def abonnement(req):
+def abonnement(request):
     teachersAndStudents = CustomUser.objects.all().filter(is_abonne = 0)
     typeAbonnements = TypeAbonnements.objects.all()
-    return render(req, 'abonnement.html', {"typeAbonnements": typeAbonnements, "teachers": teachersAndStudents.filter(user_type = "Enseignant"), "students": teachersAndStudents.filter(user_type = "Eleve")})
+    classes = Classes.objects.all()
+    if request.method == 'POST':
+        classe_id = request.POST.get('id_classe')
+        classe_active = Classes.objects.get(id=classe_id)
+        if classe_id:
+            Students = teachersAndStudents.filter(classe_id=classe_id)
+            return render(request, 'abonnement.html', {"typeAbonnements": typeAbonnements,
+                                                   "students": Students.filter(user_type = "Eleve"),
+                                                   "classes": classes,
+                                                    "classe_active": classe_active
+                                                   })
+    else:
+        return render(request, 'abonnement.html', {"typeAbonnements": typeAbonnements,
+                                           "teachers": teachersAndStudents.filter(user_type = "Enseignant"),
+                                           "students": teachersAndStudents.filter(user_type = "Eleve"),
+                                           "classes": classes,
+                                           })
 
-def abonner(req, element_id):
+def abonner(request, element_id):
     element = CustomUser.objects.get(pk = element_id)
-    if req.method == 'POST':
-        typeAbonnementId = req.POST.get("type_abonnement_id")
+    if request.method == 'POST':
+        typeAbonnementId = request.POST.get("type_abonnement_id")
         element.is_abonne = True
         element.type_abonnement_id = typeAbonnementId
         element.date_abonnement = timezone.now().date()
@@ -237,12 +255,12 @@ def abonner(req, element_id):
     return redirect("abonnement")
 
 
-def abonnes(req):
+def abonnes(request):
     teachersAndStudents = CustomUser.objects.all().filter(is_abonne = 1)
     liste_jours = {}
     for teachersAndStudent in teachersAndStudents:
         liste_jours[teachersAndStudent.id] = calculer_jours_restants(teachersAndStudent)
-    return render(req, 'abonnes.html', {"teachers": teachersAndStudents.filter(user_type = "Enseignant"), "students": teachersAndStudents.filter(user_type = "Eleve"), "jours_restants": liste_jours})
+    return render(request, 'abonnes.html', {"teachers": teachersAndStudents.filter(user_type = "Enseignant"), "students": teachersAndStudents.filter(user_type = "Eleve"), "jours_restants": liste_jours})
 
 
 def desabonner(request):
@@ -265,57 +283,57 @@ def desabonner(request):
     return redirect("abonnes")
 
 
-def inscrire(req):
-    if req.method == 'POST':
-        form = CustomUserForm(req.POST)
+def inscrire(request):
+    if request.method == 'POST':
+        form = CustomUserForm(request.POST)
         if form.is_valid():
             form.save()
             return redirect("liste")
     else:
 
         form = CustomUserForm()
-        return render(req, 'inscrire.html', {'form': form} )
+        return render(request, 'inscrire.html', {'form': form} )
 
 
-def editCustomuser(req, user_id):
+def editCustomuser(request, user_id):
     user = CustomUser.objects.get(pk = user_id)
-    if req.method == 'POST':
-        form = CustomUserForm(req.POST, instance = user)
+    if request.method == 'POST':
+        form = CustomUserForm(request.POST, instance = user)
         if form.is_valid():
             form.save()
             return redirect("liste")
     else:
         form = CustomUserForm(instance = user)
-    return render(req, 'inscrire.html', {'form': form})
+    return render(request, 'inscrire.html', {'form': form})
 
 
 def liste(request):
     teachersAndStudents = CustomUser.objects.all()
 
-    return render(request, 'liste.html', {"teachers": teachersAndStudents.filter(user_type = "Enseignant"), "students": teachersAndStudents.filter(user_type = "Eleve")})
+    return render(request, 'tables-data.html', {"teachers": teachersAndStudents.filter(user_type = "Enseignant"), "students": teachersAndStudents.filter(user_type = "Eleve")})
 
 
-def removeStudent(req):
-    if req.POST.get('student_id'):
+def removeStudent(request):
+    if request.POST.get('student_id'):
         try:
-            student = CustomUser.objects.get(pk=req.POST.get('student_id'))
+            student = CustomUser.objects.get(pk=request.POST.get('student_id'))
             name = student.firstname
             student.delete()
-            messages.success(req, f"L'élève {name} a été supprimé avec succès")
+            messages.success(request, f"L'élève {name} a été supprimé avec succès")
         except Exception as e:
-            messages.error(req, f"Désoler nous avons rencontré une erreur {e}.")
+            messages.error(request, f"Désoler nous avons rencontré une erreur {e}.")
     return redirect("liste")
 
 
-def removeTeacher(req):
-    if req.POST.get('teacher_id'):
+def removeTeacher(request):
+    if request.POST.get('teacher_id'):
         try:
-            teacher = CustomUser.objects.get(pk=req.POST.get('teacher_id'))
+            teacher = CustomUser.objects.get(pk=request.POST.get('teacher_id'))
             name = teacher.firstname
             teacher.delete()
-            messages.success(req, f"L'élève {name} a été supprimé avec succès")
+            messages.success(request, f"L'élève {name} a été supprimé avec succès")
         except Exception as e:
-            messages.error(req, f"Désoler nous avons rencontré une erreur {e}.")
+            messages.error(request, f"Désoler nous avons rencontré une erreur {e}.")
     return redirect("liste")
 
 def importer_fichier(request):
@@ -362,4 +380,4 @@ def importer_fichier(request):
         except Exception as e:
             return JsonResponse({'erreur': str(e)}, status=500)
 
-    return JsonResponse({'erreur': 'Requête incorrecte'}, status=400)
+    return JsonResponse({'erreur': 'requestuête incorrecte'}, status=400)

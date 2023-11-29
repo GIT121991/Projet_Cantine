@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block main %}
-<div class="card">
+ <div class="card">
     <div class="card-header d-flex justify-content-between">
         <h5 class="card-title">Liste des élèves et enseignants</h5>
         <div class="d-flex ">
@@ -18,14 +18,14 @@
       <!-- Default Tabs -->
         <ul class="nav nav-tabs" id="myTab" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="true">Enseignants</button>
+                <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="true">Enseignants</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="false" tabindex="-1">Elèves</button>
+                <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="false" tabindex="-1">Elèves</button>
             </li>
         </ul>
         <div class="tab-content pt-2" id="myTabContent">
-            <div class="tab-pane fade" id="home" role="tabpanel" aria-labelledby="home-tab">
+            <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
                 {% if messages %}
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         {% for message in messages %}
@@ -34,45 +34,39 @@
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 {% endif %}
-            
-                <div>
-                    <table class="table datatable border-primary">
-                        <thead>
-                            <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">Nom</th>
-                                <th scope="col">Prénoms</th>
-                                <th scope="col">Sexe</th>
-                                <th scope="col">Classe</th>                               
-                                <th scope="col" colspan="2">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for student in students %}
-                                <tr>
-                                    <th scope="row">{{forloop.counter}}</th>
-                                    <td>{{student.lastname}}</td>
-                                    <td>{{student.firstname}}</td>
-                                    <td>{{student.genre}}</td>
-                                    <td>{{student.classe.classe_name}}</td>                                 
-                                    <td>
-                                        <a href="{% url 'editCustomuser' student.id %}" class="btn btn-secondary">
-                                            <i class="bi bi-pencil-fill" ></i>
-                                        </a>
-                                    </td>
-                                    <td>
-                                        <button type="button" id="btn-delete-student" class="btn btn-danger" data-bs-toggle="modal"
-                                                data-bs-target="#verticalycenteredstudent" data-student-id="{{ student.id }}">
-                                            <i class="bi bi-archive-fill" ></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+                <!-- Table with stripped rows -->
+               <table class="table datatable table-striped">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Prénoms</th>
+                    <th scope="col">Sexe</th>
+                    <th scope="col">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {% for teacher in teachers %}
+                  <tr>
+                    <th scope="row">{{forloop.counter}}</th>
+                    <td>{{teacher.lastname}}</td>
+                    <td>{{teacher.firstname}}</td>
+                    <td>{{teacher.genre}}</td>
+                    <td>
+                      <a href="{% url 'editCustomuser' teacher.id %}" class="btn btn-secondary">
+                          <i class="bi bi-pencil-fill" ></i>
+                      </a>
+                      <button type="button" id="btn-delete-teacher" class="btn btn-danger" data-bs-toggle="modal"
+                              data-bs-target="#verticalycenteredteacher" data-teacher-id="{{ teacher.id }}">
+                      <i class="bi bi-archive-fill" ></i>
+                      </button>
+                    </td>
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
             </div>
-            <div class="tab-pane fade active show" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+            <div class="tab-pane fade active show" id="home" role="tabpanel" aria-labelledby="home-tab">
                 {% if messages %}
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         {% for message in messages %}
@@ -82,44 +76,43 @@
                     </div>
                 {% endif %}
 
-                <div>
-                    <table class="table table-bordered border-primary">
-                        <thead>
-                            <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">Nom</th>
-                                <th scope="col">Prénoms</th>
-                                <th scope="col">Sexe</th>
-                                <th scope="col" colspan="2">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for teacher in teachers %}
-                                <tr>
-                                    <th scope="row">{{forloop.counter}}</th>
-                                    <td>{{teacher.lastname}}</td>
-                                    <td>{{teacher.firstname}}</td>
-                                    <td>{{teacher.genre}}</td>
-                                    <td>
-                                        <a href="{% url 'editCustomuser' teacher.id %}" class="btn btn-secondary">
-                                            <i class="bi bi-pencil-fill" ></i>
-                                        </a>
-                                    </td>
-                                    <td>
-                                        <button type="button" id="btn-delete-teacher" class="btn btn-danger" data-bs-toggle="modal"
-                                                data-bs-target="#verticalycenteredteacher" data-teacher-id="{{ teacher.id }}">
-                                        <i class="bi bi-archive-fill" ></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+              <!-- Table with stripped rows -->
+              <table class="table datatable table-striped">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Prénoms</th>
+                    <th scope="col">Sexe</th>
+                    <th scope="col">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {% for student in students %}
+                  <tr>
+                    <th scope="row">{{forloop.counter}}</th>
+                    <td>{{student.lastname}} {{student.firstname}}</td>
+                    <td>{{student.genre}}</td>
+                    <td>{{student.classe.classe_name}}</td>
+                    <td>
+                      <a href="{% url 'editCustomuser' student.id %}" class="btn btn-secondary">
+                          <i class="bi bi-pencil-fill" ></i>
+                      </a>
+                      <button type="button" id="btn-delete-student" class="btn btn-danger" data-bs-toggle="modal"
+                              data-bs-target="#verticalycenteredteacher" data-student-id="{{ student.id }}">
+                      <i class="bi bi-archive-fill" ></i>
+                      </button>
+                    </td>
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
             </div>
-        </div><!-- End Default Tabs -->
+
+        </div>
+
     </div>
-</div>
+ </div>
 
 <!--modale de suppression -->
 

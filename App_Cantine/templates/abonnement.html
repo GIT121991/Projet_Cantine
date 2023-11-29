@@ -6,16 +6,29 @@
           <!-- Default Tabs -->
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="true">Enseignants</button>
+                    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="true">Enseignants</button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="false" tabindex="-1">Elèves</button>
+                    <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="false" tabindex="-1">Elèves</button>
                 </li>
             </ul>
             <div class="tab-content pt-2" id="myTabContent">
-                <div class="tab-pane fade" id="home" role="tabpanel" aria-labelledby="home-tab">
+                <div class="tab-pane fade active show" id="home" role="tabpanel" aria-labelledby="home-tab">
+                    <div class=" m-2">
+                        <form action="{% url 'abonnement' %}" method="POST" id="form_classe">
+                            {% csrf_token %}
+                            <div class="form-group d-inline-flex">
+                                <label for="id_classe" class="col-lg-5 mt-2"> <strong>Classe :</strong></label>
+                                <select name="id_classe" id="id_classe" class="form-select bg-info col-lg-7">
+                                    <option value="{{students.classe.classe_name}}">{{classe_active.classe_name}}</option>
+                                    {% for classe in classes %}
+                                    <option value="{{ classe.id }}"> {{ classe.classe_name }} </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
 
-                
+                        </form>
+                    </div>
                     <div>
                         <table class="table table-bordered border-primary">
                             <thead>
@@ -38,9 +51,9 @@
                                         <td>{{student.genre}}</td>
                                         <form method="POST" action="{% url 'abonner' student.id %}" style="display: flex; margin-left: 5px;">
                                                 {% csrf_token %}
-                                        <td style="width:180px;">
+                                        <td style="width:200px;">
                                             <select aria-label="Default select example" name="type_abonnement_id"
-                                                    id="type_abonnement_id1" class="form-control btn btn-info">
+                                                    id="type_abonnement_id1" class="form-select bg-info">
                                                 <option value="">Type abonnement</option>
                                                 {% for typeAbonnement in typeAbonnements %}
                                                     <option value="{{ typeAbonnement.id }}">{{ typeAbonnement.type }}</option>
@@ -59,7 +72,7 @@
                         </table>
                     </div>
                 </div>
-                <div class="tab-pane fade active show" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
 
                     <div>
                         <table class="table table-bordered border-primary">
@@ -81,9 +94,9 @@
                                         <td>{{teacher.genre}}</td>
                                         <form method="POST" action="{% url 'abonner' teacher.id %}" style="display: flex; margin-left: 5px;">
                                                 {% csrf_token %}
-                                        <td style="width:180px;">
+                                        <td style="width:200px;">
                                             <select aria-label="Default select example" name="type_abonnement_id"
-                                                    id="type_abonnement_id2" class="form-control btn btn-info">
+                                                    id="type_abonnement_id2" class="form-select bg-info">
                                                 <option value="">Type abonnement</option>
                                                 {% for typeAbonnement in typeAbonnements %}
                                                     <option value="{{ typeAbonnement.id }}">{{ typeAbonnement.type }}</option>
@@ -108,5 +121,12 @@
     </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    // Détecter les changements de sélection
+    document.getElementById('id_classe').addEventListener('change', function () {
+        // Soumettre automatiquement le formulaire lors d'un changement
+        document.getElementById('form_classe').submit();
+    });
+</script>
 
 {% endblock %}
